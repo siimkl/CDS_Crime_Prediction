@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XGBoost model details</title>
+  <link rel="stylesheet" href="xgboost_model.css">
+</head>
+<body>
+  <div class="model-shell">
+    <header class="model-header">
+      <div>
+        <div class="eyebrow">Model documentation</div>
+        <h1>XGBoost technology and prototype forecasting model</h1>
+        <p class="header-copy">
+          This page first explains what XGBoost is as a forecasting technology, then documents the
+          practical parameters and logic used in this Tartu public-safety prototype.
+        </p>
+      </div>
+      <a class="back-link" href="index.html">Back to forecasting map</a>
+    </header>
+
+    <section class="notice-panel">
+      <div class="eyebrow">Important note</div>
+      <p>
+        The live application is a school-work prototype. The interface presents an
+        <strong>XGBoost hourly forecast</strong>, but the current demo implementation is a transparent,
+        rule-based approximation of how an operational ML forecasting workflow could behave.
+      </p>
+    </section>
+
+    <section class="content-grid">
+      <section class="panel">
+        <div class="panel-kicker">Part 1</div>
+        <h2>What XGBoost is</h2>
+        <p>
+          XGBoost stands for <strong>Extreme Gradient Boosting</strong>. It is a supervised machine-learning
+          method that builds many decision trees in sequence, where each new tree tries to correct the
+          errors made by the previous ones.
+        </p>
+        <p>
+          For forecasting work, XGBoost is often used when the input data contains mixed feature types,
+          nonlinear relationships, threshold effects, and interactions between variables such as time,
+          weather, land use, and neighborhood characteristics.
+        </p>
+        <ul class="bullet-list">
+          <li>It handles structured tabular data very well.</li>
+          <li>It can capture interactions such as “Friday night + nightlife area + rain”.</li>
+          <li>It usually performs strongly without requiring a huge amount of feature scaling.</li>
+          <li>It can be tuned for regression tasks such as hourly incident-count prediction.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-kicker">Part 2</div>
+        <h2>How it would fit this project</h2>
+        <p>
+          In a full production version, the model target would be <code>incident_count</code> for one
+          district at one hour. Candidate features would include:
+        </p>
+        <ul class="bullet-list">
+          <li>district type, density, population, nightlife, student, and vulnerability markers</li>
+          <li>hour of day, day of week, weekend/night indicators, and seasonality</li>
+          <li>weather context and persistence blocks</li>
+          <li>historical incident patterns from past area-hour combinations</li>
+        </ul>
+        <p>
+          The application layer would then convert predicted incident counts into patrol-planning signals,
+          risk bands, and operational summaries.
+        </p>
+      </section>
+    </section>
+
+    <section class="panel">
+      <div class="panel-kicker">Prototype model</div>
+      <h2>Parameters used in this demo</h2>
+      <p>
+        The current map uses a deterministic, readable forecast engine inspired by an ML workflow. It blends
+        historical area-hour behavior, citywide temporal pulse, weather context, and a small motion wave.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Current setting</th>
+              <th>What it does</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Forecast horizon</td>
+              <td>48 hours</td>
+              <td>Builds one citywide hourly outlook for the next two days.</td>
+            </tr>
+            <tr>
+              <td>Area exact history weight</td>
+              <td>0.55</td>
+              <td>Uses the same district + weekday + hour pattern as the main anchor.</td>
+            </tr>
+            <tr>
+              <td>Area hour fallback weight</td>
+              <td>0.18</td>
+              <td>Falls back to district + hour behavior across all weekdays.</td>
+            </tr>
+            <tr>
+              <td>Area day fallback weight</td>
+              <td>0.12</td>
+              <td>Adds district + weekday behavior independent of exact hour.</td>
+            </tr>
+            <tr>
+              <td>Area mean weight</td>
+              <td>0.10</td>
+              <td>Keeps each district tied to its overall historical baseline.</td>
+            </tr>
+            <tr>
+              <td>City pulse bridge weight</td>
+              <td>0.05</td>
+              <td>Injects citywide temporal pressure into the district baseline.</td>
+            </tr>
+            <tr>
+              <td>City pulse clamp</td>
+              <td>0.70 to 1.34</td>
+              <td>Prevents citywide timing effects from becoming unrealistically large.</td>
+            </tr>
+            <tr>
+              <td>Weather factors</td>
+              <td>clear 1.04, rain 0.92, snow 0.82, storm 0.88, extremes 0.90</td>
+              <td>Modulates hourly incident expectations by weather state.</td>
+            </tr>
+            <tr>
+              <td>Weather outlook logic</td>
+              <td>Mostly clear, with rain blocks lasting 3 to 6 hours</td>
+              <td>Keeps the short forecast visually stable and realistic.</td>
+            </tr>
+            <tr>
+              <td>Motion wave</td>
+              <td>1 +/- 0.05 sinusoidal variation</td>
+              <td>Adds slight hour-to-hour movement so adjacent hours are not identical.</td>
+            </tr>
+            <tr>
+              <td>Series smoothing</td>
+              <td>0.22 previous, 0.56 current, 0.22 next</td>
+              <td>Smooths the hourly forecast to avoid harsh spikes between neighboring hours.</td>
+            </tr>
+            <tr>
+              <td>Risk score formula</td>
+              <td>0.68 incident intensity + 0.32 per-capita pressure</td>
+              <td>Converts forecast counts into a 1 to 10 operational risk score.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <section class="panel">
+        <div class="panel-kicker">Operational thresholds</div>
+        <h2>Current patrol strategy bands</h2>
+        <ul class="bullet-list">
+          <li><strong>Risk 8-10:</strong> visible patrol presence and fast-response positioning</li>
+          <li><strong>Risk 6-7:</strong> targeted patrol pass during the higher-demand window</li>
+          <li><strong>Risk 1-5:</strong> routine coverage with watchlist awareness</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <div class="panel-kicker">Future upgrade path</div>
+        <h2>What a full ML version would add</h2>
+        <ul class="bullet-list">
+          <li>real XGBoost model training and validation on rolling historical windows</li>
+          <li>feature importance and SHAP-style interpretability layer</li>
+          <li>separate calibration of prediction intervals and rare-event handling</li>
+          <li>automatic refresh from newly ingested police and weather feeds</li>
+        </ul>
+      </section>
+    </section>
+  </div>
+</body>
+</html>

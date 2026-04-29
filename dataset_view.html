@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tartu Safety Dataset Table</title>
+  <link rel="stylesheet" href="dataset_view.css">
+</head>
+<body>
+  <div class="dataset-shell">
+    <header class="dataset-header">
+      <div>
+        <div class="eyebrow">Dataset browser</div>
+        <h1>Tartu Safety dataset</h1>
+        <p class="header-copy">Interactive table view sourced from <code>tartu_risk_dataset_2.csv</code>.</p>
+      </div>
+      <a class="back-link" href="index.html">Back to forecasting map</a>
+    </header>
+
+    <section class="dataset-summary" id="summaryCards">
+      <div class="summary-card">
+        <span class="summary-label">Rows</span>
+        <strong id="rowCount">-</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Districts</span>
+        <strong id="areaCount">-</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Dataset window</span>
+        <strong id="timeRange">-</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Source status</span>
+        <strong id="sourceStatus">Loading</strong>
+      </div>
+    </section>
+
+    <section class="dataset-note">
+      <div class="eyebrow">Update cadence</div>
+      <p>
+        This dataset is updated every 12 hours with weather, real incident counts,
+        and other operational changes.
+      </p>
+    </section>
+
+    <section class="dataset-sources">
+      <div class="eyebrow">Reference data provenance</div>
+      <p class="sources-copy">
+        This prototype dataset is synthetic, but it is partly informed by real public reference data
+        from Tartu and police-related published materials.
+      </p>
+      <div class="source-grid">
+        <article class="source-card">
+          <h2>Police callout reference</h2>
+          <p>
+            Incident pattern assumptions are partly grounded in published
+            <strong>Väljakutsed</strong> material, where the stated public data source is the
+            police tactical management database <strong>KILP</strong>.
+          </p>
+          <a
+            class="source-link"
+            href="https://www.politsei.ee/et/juhend/politseitoeoega-seotud-avaandmed/valjakutsed"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open official Väljakutsed source
+          </a>
+        </article>
+        <article class="source-card">
+          <h2>Tartu open data reference</h2>
+          <p>
+            District-level context also draws on Tartu open data, including
+            <strong>2025 rahvastik linnaosa andmed</strong> published by
+            <strong>Tartu Linnavalitsus</strong>.
+          </p>
+          <a
+            class="source-link"
+            href="https://avaandmed.tartulv.ee/datasets/409c44adbcda4024a51cf051e328a3a7_0/explore?location=58.369706%2C26.728789%2C13&showTable=true"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open Tartu avaandmed source
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <section class="controls-panel">
+      <label class="control-field">
+        <span>Search</span>
+        <input id="searchInput" type="search" placeholder="Area, weather, date, area type...">
+      </label>
+      <label class="control-field">
+        <span>District</span>
+        <select id="areaFilter">
+          <option value="">All districts</option>
+        </select>
+      </label>
+      <label class="control-field">
+        <span>Rows per page</span>
+        <select id="pageSize">
+          <option value="50">50</option>
+          <option value="100" selected>100</option>
+          <option value="250">250</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="table-panel">
+      <div class="table-meta">
+        <div id="resultsLabel">Loading rows...</div>
+        <div class="pagination">
+          <button id="prevPage" type="button">Previous</button>
+          <span id="pageLabel">Page 1 / 1</span>
+          <button id="nextPage" type="button">Next</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="datasetTable">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="embedded_dataset.js"></script>
+  <script src="dataset_view.js"></script>
+</body>
+</html>

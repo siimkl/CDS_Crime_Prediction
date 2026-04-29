@@ -1,0 +1,62 @@
+# Dataset Overview
+
+Dataset: `tartu_risk_dataset_annelinn_nightlife_zone_1`
+
+This CSV is a synthetic hourly panel dataset for Tartu public-order incident
+forecasting. One row is one district at one timestamp. The target is
+`incident_count`; there is no `risk_score` and no `same_slot_avg_90d`.
+
+## Basic Shape
+
+- Rows: 38,880
+- Columns: 18
+- Districts: 18
+- Hourly timestamps: 2,160
+- Time range: 2026-01-28 00:00:00 to 2026-04-27 23:00:00
+- Daily incident mean: 43.26
+- Daily incident range: 26 to 74
+
+## Columns
+
+`id`, `area`, `time`, `population`, `area_km2`, `area_population_density`, `foot_traffic`, `area_type`, `socially_vulnerable_zone`, `minorities_zone`, `student_zone`, `nightlife_zone`, `day_of_week`, `hour`, `is_weekend`, `is_night`, `weather`, `incident_count`
+
+## Additional Notes
+
+- No extra synthetic-control fields beyond the core schema
+- Non-target predictors in this file: `population`, `area_km2`, `area_population_density`, `foot_traffic`, `area_type`, `socially_vulnerable_zone`, `minorities_zone`, `student_zone`, `nightlife_zone`, `day_of_week`, `hour`, `is_weekend`, `is_night`, `weather`
+
+## Target Behavior
+
+- Zero rows: 91.52%
+- Rows with exactly one incident: 7.24%
+- Rows with two or more incidents: 1.24%
+- Highest incident day: 2026-03-28 with 74 incidents
+- Lowest incident day: 2026-03-05 with 26 incidents
+- Feb 23 total: 45 incidents
+- Feb 24 total: 51 incidents
+
+The target is intentionally sparse: most district-hour combinations have no
+incident, single incidents are occasional, and 2+ counts are uncommon.
+
+## Strongest Aggregate Patterns
+
+- Highest-total districts: Kesklinn (1097), Annelinn (673), Ülejõe (536), Karlova (410), Vaksali (309)
+- Lowest-total districts: Variku (48), Raadi-Kruusamäe (46), Ihaste (36), Kvissentali (18), Maarjamõisa (12)
+- Weekday daily means: Monday 39.1, Tuesday 36.6, Wednesday 36.3, Thursday 38.3, Friday 51.2, Saturday 58.0, Sunday 42.8
+- Weather mix: clear 33.6%, rain 27.8%, snow 20.6%, storm 10.3%, other_extremes 7.8%
+
+## Visuals
+
+![Daily incident totals](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/01_daily_incident_totals.png)
+
+![Incidents by area](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/02_incidents_by_area.png)
+
+![Weekday-hour heatmap](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/03_weekday_hour_heatmap.png)
+
+![Weather patterns](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/04_weather_patterns.png)
+
+![Target distribution](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/05_incident_count_distribution.png)
+
+![Area feature profile](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/06_area_feature_profile.png)
+
+![Holiday window](visuals_tartu_risk_dataset_annelinn_nightlife_zone_1/07_holiday_window.png)

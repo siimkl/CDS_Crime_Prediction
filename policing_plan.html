@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>48-hour Policing Plan</title>
+  <link rel="stylesheet" href="policing_plan.css">
+</head>
+<body>
+  <div class="plan-shell">
+    <header class="plan-header">
+      <div>
+        <div class="eyebrow">Decision support tool</div>
+        <h1>48-hour policing and patrol-planning guidance</h1>
+        <p class="header-copy">
+          Direct guidelines for patrol planning specialists based on the next 48-hour forecast window.
+        </p>
+      </div>
+      <a class="back-link" href="index.html">Back to forecasting map</a>
+    </header>
+
+    <section class="warning-panel">
+      <div class="eyebrow">Use note</div>
+      <p>
+        This page is a decision-support prototype generated from the same toy model used in the forecasting map.
+        It is best treated as a planning aid, not as an operational command system.
+      </p>
+    </section>
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <span class="summary-label">Plan window</span>
+        <strong id="planWindow">Loading...</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Peak city hour</span>
+        <strong id="peakHour">-</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Highest-demand suburb</span>
+        <strong id="topArea">-</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Weather pattern</span>
+        <strong id="weatherSummary">-</strong>
+      </div>
+    </section>
+
+    <section class="plan-grid">
+      <section class="panel">
+        <div class="panel-kicker">Immediate priorities</div>
+        <h2>Next 12 hours</h2>
+        <div id="immediatePriorities" class="priority-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-kicker">Operational guidance</div>
+        <h2>Patrol planning notes</h2>
+        <ul id="guidelineList" class="guideline-list"></ul>
+      </section>
+    </section>
+
+    <section class="panel">
+      <div class="panel-kicker">High-attention windows</div>
+      <h2>Top city hours across the next 48 hours</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Hour</th>
+              <th>City incidents</th>
+              <th>Top suburb</th>
+              <th>Weather</th>
+            </tr>
+          </thead>
+          <tbody id="attentionTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-kicker">District watchlist</div>
+      <h2>Suburb focus over the 48-hour window</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Suburb</th>
+              <th>Avg incidents/hour</th>
+              <th>Peak risk</th>
+              <th>Peak hour</th>
+              <th>Suggested strategy</th>
+            </tr>
+          </thead>
+          <tbody id="watchlistTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="embedded_dataset.js"></script>
+  <script src="policing_plan.js"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+Andmestik
+Üks rida tabelis (csv)  = üks Tartu piirkond ühel konkreetsel tunnil
+18 piirkonda × 90 päeva × 24h = 38 880 tabelirida
+
+Ajaperiood 28.01.2026 - 28.04.2026
+
+
+Veerg
+Tüüp
+Märkus
+Features
+id
+int
+Iga rea unikaalne identifikaator 
+area
+kategooriline
+Linnaosad 18tk (vt tabelit allpool)
+area_population_density
+arvuline
+Tabelist
+area_type
+kategooriline
+commercial/residential/mixed 
+Staatiliselt linnaosa-spetsiifilised st jäävad alati iga linnaosa puhul samadeks. Anda ise subjektiivne hinnang igale linnaosale. Tulevad tabelist, mis allpool.
+
+
+socially_vulnerable_zone
+binaarne
+0/1 (ei/jah)  Kas on vaesem linnaosa
+minorities_zone
+binaarne
+0/1 (ei/jah)    Kas on muurahvuseline linnaosa
+student_zone
+binaarne
+0/1 (ei/jah)   Kas on palju noori/tudengeid?
+nightlife_zone
+binaarne
+0/1 (ei/jah)   Kas on meelelahtust ja ööelu?
+foot_traffic
+kategooriline
+low/medium/high; mida kaugemal kesklinnast linnaosa on seda rohkem low 
+time
+timestamp
+kuupäev + kellaaeg tunnitäpsusega
+day_of_week
+kategooriline
+E–P (Monday, Tuesday, … ) 
+hour
+arvuline / kategooriline
+0–23
+is_weekend
+binaarne
+0/1 (ei/jah)   Kas on R/L/P?
+Hour-ist tuletatav, aga kohe featuritena vist mõistlik
+is_night
+binaarne
+0/1 (ei/jah)   Kas on 21:00-05:00?
+weather
+kategooriline
+clear/rain/snow/storm/other_extremes 
+Loogika eeldab mõningat stabiilsust st päris iga tund ei saa hüpelda (vt tabelt allpool)
+Target
+incident _count
+arvuline
+täisarvuline >=0 ; mitu politsei poolt registreeritud insidenti oli
+Genereerimisel võtta arvesse linnaosade klassifikaatoris olevaid omadusi; 
+
+Arvutamiseks vaata tabelit allpool
+
+
+Linnaosade klassifikaator
+NIMI
+Population
+Area in Square Kilometers
+Density
+foot_traffic
+area_type
+socially_vulnerable_zone
+minorities_zone
+student_zone
+nightlife_zone
+Variku
+1 714
+0,761
+2 252
+low
+residential
+1
+0
+0
+0
+Ropka
+4 710
+1,442
+3 266
+low
+mixed
+1
+1
+0
+0
+Vaksali
+3 091
+0,666
+4 641
+medium
+mixed
+0
+0
+1
+1
+Karlova
+8 748
+2,683
+3 261
+medium
+residential
+1
+0
+1
+1
+Tähtvere
+3 158
+2,5
+1 263
+low
+residential
+0
+0
+0
+0
+Veeriku
+5 070
+2,823
+1 796
+medium
+residential
+0
+1
+0
+0
+Ihaste
+3 050
+4,8
+635
+low
+residential
+0
+0
+0
+0
+Tammelinn
+8 118
+3,182
+2 551
+low
+residential
+0
+0
+0
+0
+Ränilinn
+2 189
+1,222
+1 791
+medium
+mixed
+0
+0
+0
+0
+Ropka tööstuse
+2 198
+3,249
+676
+low
+commercial
+1
+1
+0
+0
+Kesklinn
+6 956
+1,799
+3 867
+high
+commercial
+1
+1
+1
+1
+Supilinn
+2 307
+0,483
+4 776
+low
+residential
+1
+0
+1
+0
+Raadi-Kruusamäe
+4 804
+2,828
+1 699
+low
+residential
+0
+0
+0
+0
+Jaamamõisa
+3 464
+1,5
+2 309
+low
+residential
+1
+1
+0
+0
+Annelinn
+24 981
+4,91
+5 088
+medium
+residential
+1
+1
+0
+0
+Ülejõe
+7 559
+1,525
+4 957
+medium
+mixed
+0
+1
+1
+1
+Maarjamõisa
+477
+1,133
+421
+low
+residential
+0
+0
+0
+0
+Kvissentali
+865
+1,509
+573
+low
+residential
+0
+0
+0
+0
+
+
+Ilmaga seotud reeglid
+Üks ilmaseis kestab:
+6h
+12h
+24h
+vahel 48h
+Ilmastikuolude jaotumine:
+28.01–20.02 (talv)
+clear: 35%
+snow: 40%
+rain: 15%
+storm: 5%
+other: 5%
+21.02–20.03 (üleminek)
+clear: 35%
+snow: 20%
+rain: 35%
+storm: 5%
+other: 5%
+21.03–28.04 (kevad)
+clear: 45%
+snow: 5%
+rain: 40%
+storm: 7%
+other: 3% 
+Tartu ilmastikuloogika lisareeglid
+1. Snow/Rain sagedamini öösel/hommikul
+2. Storm sagedamini märts/aprill
+4. Pärast Snow/Rain suurem šanss clear
+
+Ajaloolise incident_count genereerimine
+Lähtume politsei avaandmetest pärinevast statistikast, mis käib Tartu maakonna kohta tervikuna; kuna Tartu elanikkond moodustab Tartu maakonnast ca 75%, siis pmst on sama.
+Keskmine päevas: 43.3 insidenti 
+Tüüpiline vahemik: 35–50 päevas
+Äärmuslikud päevad: vaikseim: 4 ja aktiivseim: 87
+Nädalapäeva mõju
+Päev
+Päevas
+Laupäev
+59.6
+Pühapäev
+50.2
+Reede
+43.5
+Neljapäev
+39.4
+Esmaspäev
+37.9
+Teisipäev
+36.5
+Kolmapäev
+36.3
+
+
+Ilmastiku mõju lisamine incident_counti genereerimisel
+Clear → rohkem liikumist, nädalavahetusel rohkem intsidente
+Rain → vähem tänavaliikumist, öösel väike konfliktirisk
+Snow → liikuvus alla, vähem avaliku korra juhtumeid
+Storm → liikuvus alla, juhuslikud intsidendid
+
+Masinõppemudel
+Kasutame masinõpet selleks, et ennustada Tartu eri linnaosade avaliku korra/turvalisuse taset konkreetsel nädalapäeval ja kellaajal, arvestades piirkonna omadusi, ilmastikku, inimeste liikumist, sündmusi ja ajaloolisi mustreid. Ei ennustada kindlat kuritegu, vaid kus piirkonnas ja millal on avaliku korra intsidentide tõenäosus (ja patrullivajadus) suhteliselt kõrgem või madalam.
+Näide sisendist mudelile
+area = Kesklinn
+day_of_week = Friday
+hour = 13
+is_weekend = 1
+is_night = 0
+weather = rain
+Näide väljundist
+Incident_count  = 0.24 
+Tõlgendus
+See tähendab, et mudeli hinnangul on homme reedel kell 13 Kesklinnas oodata alla ühe insidendi, mis viitab madalale riskitasemele. Seda saab kasutada näiteks patrullide planeerimiseks või riskikaardi loomiseks. Sisuliselt saame pakkuda turvaennustust nagu ilmaennustust.

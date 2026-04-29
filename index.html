@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City of Tartu Public Safety Forecasting Support Tool</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="map-stage">
+      <svg
+        id="mapSvg"
+        class="map-svg"
+        viewBox="0 190 1220 1040"
+        aria-label="City of Tartu public safety forecasting support tool"
+        role="img"
+      >
+        <defs>
+          <filter id="heat-blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="18"></feGaussianBlur>
+          </filter>
+          <filter id="panel-shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0d141b" flood-opacity="0.28"></feDropShadow>
+          </filter>
+        </defs>
+        <rect x="-200" y="-200" width="2600" height="1800" fill="#ffffff"></rect>
+        <g id="riverLayer" aria-hidden="true">
+          <path
+            class="river-outer"
+            d="M 425 260
+               C 412 292, 448 320, 500 344
+               C 548 366, 610 390, 724 428
+               C 746 452, 748 492, 732 534
+               C 716 576, 706 618, 700 664
+               C 720 704, 712 742, 742 784
+               C 752 822, 776 862, 820 904
+               C 866 944, 922 970, 990 990"
+          ></path>
+          <path
+            class="river-inner"
+            d="M 425 260
+               C 412 292, 448 320, 500 344
+               C 548 366, 610 390, 724 428
+               C 746 452, 748 492, 732 534
+               C 716 576, 706 618, 700 664
+               C 720 704, 712 742, 742 784
+               C 752 822, 776 862, 820 904
+               C 866 944, 922 970, 990 990"
+          ></path>
+          <path
+            class="river-branch"
+            d="M 732 534
+               C 770 560, 804 604, 820 650
+               C 834 692, 840 734, 836 774"
+          ></path>
+        </g>
+        <g id="districtZoneLayer"></g>
+        <g id="districtLayer"></g>
+      </svg>
+
+      <header class="hud top-hud">
+        <div class="top-left-stack">
+          <div class="title-stack">
+            <div class="eyebrow">Police Department Internal Decision Support</div>
+            <h1>City of Tartu Public Safety Forecasting Support Tool</h1>
+            <div class="title-subline">
+              <a class="chip chip-link" href="xgboost_model.html">
+                <span>XGBoost hourly forecast</span>
+                <span class="chip-link-cue">Model details</span>
+              </a>
+              <a class="chip chip-link" href="dataset_view.html">
+                <span>Source: Tartu Safety dataset</span>
+                <span class="chip-link-cue">Open table</span>
+              </a>
+            </div>
+          </div>
+
+          <section class="panel legend-panel">
+            <div class="panel-header tight">
+              <div>
+                <div class="panel-kicker">Heat legend</div>
+                <h3>Risk scale</h3>
+              </div>
+              <div class="map-controls">
+                <button id="zoomOut" class="mini-control zoom-label" type="button" aria-label="Zoom out">Zoom out</button>
+                <button id="resetView" class="mini-control reset" type="button">Reset</button>
+                <button id="zoomIn" class="mini-control zoom-label" type="button" aria-label="Zoom in">Zoom in</button>
+              </div>
+            </div>
+            <div class="legend-bar"></div>
+            <div class="legend-scale">
+              <span>1/10 low</span>
+              <span>10/10 critical</span>
+            </div>
+            <p class="legend-note">
+              Risk score combines predicted incidents with population-adjusted exposure.
+            </p>
+            <div class="reference-block">
+              <div class="panel-kicker">Map reference</div>
+              <div id="districtReference" class="reference-list"></div>
+            </div>
+          </section>
+        </div>
+        <div class="summary-strip">
+          <div class="summary-box context-highlight" id="summaryHourCard">
+            <div class="summary-label">Forecast hour</div>
+            <div class="summary-value" id="summaryHour">-</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-label">Predicted city incidents</div>
+            <div class="summary-value" id="summaryCityTotal">-</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-label">City weather context</div>
+            <div class="summary-value" id="summaryWeather">-</div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-label">Highest-risk suburb</div>
+            <div class="summary-value" id="summaryTopArea">-</div>
+          </div>
+        </div>
+      </header>
+
+      <aside class="hud side-hud">
+        <section class="panel selected-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-kicker">Selected suburb</div>
+              <h2 id="selectedAreaName">Loading...</h2>
+            </div>
+            <div class="score-pill" id="selectedRiskPill">-</div>
+          </div>
+          <div class="metric-grid">
+            <div class="metric">
+              <span class="metric-label">Predicted incidents</span>
+              <strong id="selectedIncident">-</strong>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Population</span>
+              <strong id="selectedPopulation">-</strong>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Density</span>
+              <strong id="selectedDensity">-</strong>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Forecast confidence</span>
+              <strong id="selectedConfidence">-</strong>
+            </div>
+          </div>
+          <div class="posture-card">
+            <span class="metric-label">Recommended policing/patrolling strategy</span>
+            <strong id="selectedPosture">-</strong>
+          </div>
+          <div class="risk-bar-shell">
+            <div class="risk-bar-label">
+              <span>Risk score</span>
+              <span id="selectedRiskText">-</span>
+            </div>
+            <div class="risk-bar-track">
+              <div class="risk-bar-fill" id="selectedRiskBar"></div>
+            </div>
+          </div>
+          <div class="detail-list">
+            <div><span>Foot traffic</span><strong id="selectedFootTraffic">-</strong></div>
+            <div><span>Area type</span><strong id="selectedAreaType">-</strong></div>
+            <div><span>Nightlife / student</span><strong id="selectedLifestyle">-</strong></div>
+            <div><span>Population pressure</span><strong id="selectedPerCapita">-</strong></div>
+          </div>
+          <p class="selected-note" id="selectedNarrative"></p>
+        </section>
+
+        <section class="panel plan-panel">
+          <div class="panel-header tight">
+            <div>
+              <div class="panel-kicker">Decision support</div>
+              <h3>Patrol planning</h3>
+            </div>
+          </div>
+          <p class="plan-copy">
+            Turn the 48-hour forecast into direct patrol guidance.
+          </p>
+          <a class="plan-button" href="policing_plan.html">Generate 48-hour policing plan</a>
+        </section>
+      </aside>
+
+      <footer class="hud bottom-hud">
+        <div class="timeline-head">
+          <div class="timeline-title">
+            <div class="panel-kicker">48-hour outlook</div>
+            <div id="timelineStamp" class="timeline-stamp">Loading forecast...</div>
+          </div>
+          <div class="timeline-controls">
+            <button id="stepBack" class="control-button" type="button">-1h</button>
+            <button id="playToggle" class="control-button primary" type="button">Run 48h Forecast</button>
+            <button id="stepForward" class="control-button" type="button">+1h</button>
+          </div>
+        </div>
+        <input id="hourSlider" class="timeline-slider" type="range" min="0" max="47" step="1" value="0">
+        <div id="sliderScale" class="slider-scale"></div>
+      </footer>
+
+      <div id="loadingState" class="loading-state">
+        <div class="loading-card">
+          <div class="loading-title">Preparing 48-hour city forecast</div>
+          <div class="loading-copy">Reading suburb history, weather context, and map layers.</div>
+        </div>
+      </div>
+
+      <div id="errorState" class="error-state hidden">
+        <div class="loading-card error-card">
+          <div class="loading-title">Forecast failed to load</div>
+          <div class="loading-copy" id="errorMessage"></div>
+        </div>
+      </div>
+
+        <div id="startupGate" class="startup-gate">
+          <div class="startup-card">
+            <div class="eyebrow">Important notice</div>
+            <h2>Prototype system notice</h2>
+
+            <div class="startup-intro">
+              <div class="startup-lead">Academic prototype only</div>
+              <p>
+                This application is a prototype decision-support tool developed for academic project work.
+                It is not an operational police information system.
+              </p>
+            </div>
+
+            <div class="startup-emphasis">
+              <div class="startup-section-title">Critical framing</div>
+              <p>
+                It should also be understood as a critical demonstration of why systems of this kind
+                require careful scrutiny, and how they can be misleading or inappropriate when presented
+                as ready-made support for real public-safety decision-making.
+              </p>
+            </div>
+
+            <div class="startup-warning-block">
+              <div class="startup-section-title">Operational limitation</div>
+              <p>
+                Forecasts, risk scores, and recommended strategies shown here are illustrative and should
+                not be relied upon for real-world policing, emergency response, or public-safety decisions.
+              </p>
+            </div>
+
+            <div class="startup-actions">
+              <button id="startupAccept" class="control-button primary" type="button">Understood</button>
+              <button id="startupExit" class="control-button" type="button">Exit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="embedded_dataset.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
