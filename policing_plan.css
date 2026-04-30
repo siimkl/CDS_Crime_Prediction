@@ -161,6 +161,10 @@ body {
   padding: 18px 20px;
 }
 
+.summary-grid + .panel {
+  margin-top: 28px;
+}
+
 .plan-grid + .panel,
 .plan-grid + .panel + .panel {
   margin-top: 18px;

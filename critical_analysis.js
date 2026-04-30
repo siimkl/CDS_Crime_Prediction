@@ -395,17 +395,17 @@ function renderConclusions(simulation) {
   const conclusionList = document.getElementById("conclusionList");
 
   longRecommendation.textContent =
-    "The simulation does not support implementing this system as an automatic patrol-allocation engine. " +
-    "It can be used as a critical teaching aid or, at most, as a tightly governed analyst support tool " +
-    "with strong human override and equity controls.";
+    "In this simulation, the system does not read well as an automatic patrol-allocation engine. " +
+    "It makes more sense as a critical teaching aid or, at most, as a tightly governed analyst " +
+    "support tool with strong human override and equity controls.";
 
   const items = [
-    "Do not let recorded incidents directly drive future patrol allocation without separating enforcement-generated events from public-harm events.",
-    "Require regular fairness audits that test whether minority and socially vulnerable suburbs are being pushed into self-reinforcing high-risk loops.",
-    "Cap model-driven patrol concentration so the same suburbs are not repeatedly targeted quarter after quarter.",
-    "Add mandatory human review, community oversight, and written justification before major patrol reallocations are approved.",
-    "Track second-order impacts such as prestige drag, property price pressure, and ghettoization signals alongside core safety indicators.",
-    "If local police pilot any version of the system, the pilot should be small, reversible, and evaluated against harms as seriously as against prediction accuracy.",
+    "Recorded incidents were allowed to feed future patrol allocation without a clean separation between enforcement-generated events and public-harm events.",
+    "Minority and socially vulnerable suburbs were pushed toward self-reinforcing high-risk loops, which is why fairness auditing became central to the critique.",
+    "Patrol concentration accumulated in the same suburbs across quarters, making repeated targeting one of the main structural effects of the model.",
+    "The simulated system looked less harmful only when strong human review, community oversight, and written justification were assumed around major reallocations.",
+    "Second-order effects such as prestige drag, property price pressure, and ghettoization signals mattered alongside the core safety indicators.",
+    "In a small pilot scenario, the model made more sense as a reversible, closely governed analyst aid than as an operational deployment engine.",
   ];
 
   conclusionList.innerHTML = items.map((item) => `<li>${item}</li>`).join("");
