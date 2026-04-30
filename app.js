@@ -5,21 +5,21 @@ const APP_CONFIG = {
 const STARTUP_ACK_KEY = "tartuSafetyPrototypeNoticeAcceptedSession";
 
 const MAP_DEFAULT_VIEW = {
-  x: 10,
-  y: 165,
-  width: 1280,
-  height: 1090,
+  x: -230,
+  y: -150,
+  width: 1760,
+  height: 1500,
 };
 
 const MAP_BOUNDS = {
-  xMin: -180,
-  yMin: -180,
-  xMax: 1540,
-  yMax: 1240,
+  xMin: -280,
+  yMin: -260,
+  xMax: 1660,
+  yMax: 1380,
 };
 
 const MAP_MIN_VIEW_WIDTH = 560;
-const MAP_MAX_VIEW_WIDTH = 1420;
+const MAP_MAX_VIEW_WIDTH = 1820;
 
 const DAY_NAMES = [
   "Sunday",
