@@ -5,10 +5,10 @@ const APP_CONFIG = {
 const STARTUP_ACK_KEY = "tartuSafetyPrototypeNoticeAcceptedSession";
 
 const MAP_DEFAULT_VIEW = {
-  x: -230,
-  y: -150,
-  width: 1760,
-  height: 1500,
+  x: 10,
+  y: 150,
+  width: 1400,
+  height: 1193,
 };
 
 const MAP_BOUNDS = {
