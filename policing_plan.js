@@ -39,8 +39,6 @@ async function initPolicingPlan() {
   const forecast = buildPlanForecast(model, computeNextHour());
 
   renderPlanSummary(forecast);
-  renderImmediatePriorities(forecast);
-  renderGuidelines(forecast);
   renderAttentionTable(forecast);
   renderWatchlist(forecast);
 }
@@ -301,63 +299,6 @@ function renderPlanSummary(forecast) {
   document.getElementById("topArea").textContent =
     `${topArea[0]} | ${topArea[1].incidentSum.toFixed(2)} projected incidents`;
   document.getElementById("weatherSummary").textContent = describeWeatherPattern(forecast.hours);
-}
-
-function renderImmediatePriorities(forecast) {
-  const container = document.getElementById("immediatePriorities");
-  container.innerHTML = "";
-  const windows = [
-    { label: "0-12 hours", hours: forecast.hours.slice(0, 12) },
-    { label: "12-24 hours", hours: forecast.hours.slice(12, 24) },
-    { label: "24-36 hours", hours: forecast.hours.slice(24, 36) },
-    { label: "36-48 hours", hours: forecast.hours.slice(36, 48) },
-  ];
-
-  windows.forEach((window) => {
-    const areaTotals = aggregateAreaTotals(window.hours);
-    const topThree = Array.from(areaTotals.entries())
-      .sort((left, right) => right[1].incidentSum - left[1].incidentSum)
-      .slice(0, 3);
-    const peakHour = window.hours.reduce((best, current) => current.cityTotal > best.cityTotal ? current : best, window.hours[0]);
-    const card = document.createElement("div");
-    card.className = "priority-card";
-    card.innerHTML = `
-      <div class="priority-title">${window.label}</div>
-      <p class="priority-copy">
-        Focus first on ${topThree.map((entry) => entry[0]).join(", ")}.
-        Peak demand is forecast around ${formatHourStamp(peakHour.timestamp)} with
-        ${peakHour.cityTotal.toFixed(2)} city incidents and ${peakHour.topArea.area} leading the hour.
-      </p>
-    `;
-    container.append(card);
-  });
-}
-
-function renderGuidelines(forecast) {
-  const list = document.getElementById("guidelineList");
-  const topHours = [...forecast.hours]
-    .sort((left, right) => right.cityTotal - left.cityTotal)
-    .slice(0, 5);
-  const areaTotals = aggregateAreaTotals(forecast.hours);
-  const topAreas = Array.from(areaTotals.entries())
-    .sort((left, right) => right[1].incidentSum - left[1].incidentSum)
-    .slice(0, 5)
-    .map((entry) => entry[0]);
-
-  const items = [
-    `Keep visible patrol capacity concentrated around ${topAreas.slice(0, 3).join(", ")} during the strongest demand windows.`,
-    `Stage flexible backup units for ${topHours[0].topArea.area} and the surrounding corridor from ${formatHourStamp(topHours[0].timestamp)} onward.`,
-    `${describeWeatherPattern(forecast.hours)} Use the rain blocks for mobile patrol redistribution and transport-corridor checks.`,
-    `Where high-demand suburbs include nightlife or student zones, bias patrol timing toward evening spillover rather than static daytime coverage.`,
-    `Use the watchlist table below to assign routine passes to medium-risk suburbs while preserving surge capacity for the peak hours.`,
-  ];
-
-  list.innerHTML = "";
-  items.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = item;
-    list.append(li);
-  });
 }
 
 function renderAttentionTable(forecast) {

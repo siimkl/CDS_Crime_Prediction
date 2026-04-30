@@ -52,7 +52,6 @@ async function initCriticalAnalysis() {
     ],
     "Recorded incident index",
   );
-  renderDeltaChart(simulation.areaResults);
   renderImpactTable(simulation.areaResults);
   renderConclusions(simulation);
 }
@@ -369,41 +368,6 @@ function renderLineChart(container, labels, seriesList, yLabel) {
   `;
 
   container.innerHTML = `${svg}${legend}`;
-}
-
-function renderDeltaChart(areaResults) {
-  const container = document.getElementById("deltaChart");
-  const maxAbs = Math.max(...areaResults.map((item) => Math.abs(item.deltaPct)), 1);
-  const header = `
-    <div class="delta-header">
-      <div class="delta-head">Suburb</div>
-      <div class="delta-head delta-head-num">Incidents 2026</div>
-      <div class="delta-head delta-head-num">Incidents 2028</div>
-      <div class="delta-head">Chart</div>
-    </div>
-  `;
-  const rows = areaResults
-    .slice()
-    .sort((left, right) => left.deltaPct - right.deltaPct)
-    .map((item) => {
-      const barWidth = (Math.abs(item.deltaPct) / maxAbs) * 50;
-      const className = item.deltaPct <= 0 ? "improve" : "worse";
-      const style = item.deltaPct <= 0
-        ? `width:${barWidth}%;`
-        : `width:${barWidth}%;`;
-      return `
-        <div class="delta-row">
-          <div class="delta-label">${item.area}</div>
-          <div class="delta-num">${formatNumber(item.totalIncidents)}</div>
-          <div class="delta-num">${formatNumber(item.simulatedWindowIncidents)}</div>
-          <div class="delta-axis">
-            <div class="delta-center"></div>
-            <div class="delta-bar ${className}" style="${style}"></div>
-          </div>
-        </div>
-      `;
-    }).join("");
-  container.innerHTML = `${header}${rows}`;
 }
 
 function renderImpactTable(areaResults) {
