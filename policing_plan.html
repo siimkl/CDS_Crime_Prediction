@@ -8,24 +8,21 @@
 </head>
 <body>
   <div class="plan-shell">
-    <header class="plan-header">
-      <div>
-        <div class="eyebrow">Decision support tool</div>
-        <h1>48-hour policing and patrol-planning guidance</h1>
-        <p class="header-copy">
-          Direct guidelines for patrol planning specialists based on the next 48-hour forecast window.
-        </p>
-      </div>
-      <a class="back-link" href="index.html">Back to forecasting map</a>
-    </header>
-
-    <section class="warning-panel">
-      <div class="eyebrow">Use note</div>
-      <p>
-        This page is a decision-support prototype generated from the same toy model used in the forecasting map.
-        It is best treated as a planning aid, not as an operational command system.
-      </p>
-    </section>
+      <header class="plan-header">
+        <div class="plan-header-main">
+          <div class="plan-header-visual">
+            <img src="assets/patrol-vehicle-card.png" alt="Police patrol vehicle" class="plan-header-image">
+          </div>
+          <div class="plan-header-copy">
+            <div class="eyebrow">Decision support tool</div>
+            <h1>48-hour policing and patrol-planning guidance</h1>
+            <p class="header-copy">
+              Direct guidelines for patrol planning specialists based on the next 48-hour forecast window.
+            </p>
+          </div>
+        </div>
+        <a class="back-link" href="index.html">Back to forecasting map</a>
+      </header>
 
     <section class="summary-grid">
       <div class="summary-card">
@@ -71,6 +68,7 @@
               <th>City incidents</th>
               <th>Top suburb</th>
               <th>Weather</th>
+              <th>Suggested patrols</th>
             </tr>
           </thead>
           <tbody id="attentionTable"></tbody>
@@ -89,6 +87,7 @@
               <th>Avg incidents/hour</th>
               <th>Peak risk</th>
               <th>Peak hour</th>
+              <th>Suggested patrols</th>
               <th>Suggested strategy</th>
             </tr>
           </thead>

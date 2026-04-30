@@ -366,14 +366,17 @@ function renderAttentionTable(forecast) {
   const topHours = [...forecast.hours]
     .sort((left, right) => right.cityTotal - left.cityTotal)
     .slice(0, 8);
+  const maxCityTotal = Math.max(...topHours.map((hour) => hour.cityTotal), 0.01);
 
   topHours.forEach((hour) => {
+    const patrolCount = recommendedPatrolUnits(hour, maxCityTotal);
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${formatHourStamp(hour.timestamp)}</td>
       <td>${hour.cityTotal.toFixed(2)}</td>
       <td>${hour.topArea.area}</td>
       <td>${WEATHER_LABELS[hour.weather] ?? hour.weather}</td>
+      <td>${renderPatrolLoad(patrolCount)}</td>
     `;
     table.append(row);
   });
@@ -383,16 +386,19 @@ function renderWatchlist(forecast) {
   const table = document.getElementById("watchlistTable");
   table.innerHTML = "";
   const areaTotals = aggregateAreaTotals(forecast.hours);
+  const maxIncidentSum = Math.max(...Array.from(areaTotals.values()).map((summary) => summary.incidentSum), 0.01);
 
   Array.from(areaTotals.entries())
     .sort((left, right) => right[1].incidentSum - left[1].incidentSum)
     .forEach(([area, summary]) => {
+      const patrolCount = recommendedAreaPatrolUnits(summary, maxIncidentSum);
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${area}</td>
         <td>${(summary.incidentSum / 48).toFixed(2)}</td>
         <td>${summary.maxRisk}/10</td>
         <td>${formatHourStamp(summary.peakTimestamp)}</td>
+        <td>${renderPatrolLoad(patrolCount)}</td>
         <td>${strategyForRisk(summary.maxRisk)}</td>
       `;
       table.append(row);
@@ -463,6 +469,65 @@ function strategyForRisk(riskScore) {
     return "Targeted patrol pass during the higher-demand window";
   }
   return "Routine coverage with watchlist awareness";
+}
+
+function recommendedPatrolUnits(hour, maxCityTotal) {
+  const cityRatio = hour.cityTotal / maxCityTotal;
+  const riskRatio = hour.topArea.riskScore / 10;
+  const combinedLoad = (cityRatio * 0.68) + (riskRatio * 0.32);
+
+  if (combinedLoad >= 0.92) {
+    return 4;
+  }
+  if (combinedLoad >= 0.76) {
+    return 3;
+  }
+  if (combinedLoad >= 0.58) {
+    return 2;
+  }
+  return 1;
+}
+
+function recommendedAreaPatrolUnits(summary, maxIncidentSum) {
+  const incidentRatio = summary.incidentSum / maxIncidentSum;
+  const riskRatio = summary.maxRisk / 10;
+  const combinedLoad = (incidentRatio * 0.62) + (riskRatio * 0.38);
+
+  if (combinedLoad >= 0.9) {
+    return 4;
+  }
+  if (combinedLoad >= 0.72) {
+    return 3;
+  }
+  if (combinedLoad >= 0.5) {
+    return 2;
+  }
+  return 1;
+}
+
+function renderPatrolLoad(count) {
+  const icons = Array.from({ length: count }, () => patrolCarIconSvg()).join("");
+  return `
+    <div class="patrol-load" aria-label="Approximately ${count} patrols recommended">
+      <div class="patrol-icons">${icons}</div>
+      <span class="patrol-count">~${count} patrols</span>
+    </div>
+  `;
+}
+
+function patrolCarIconSvg() {
+  return `
+    <svg class="patrol-icon" viewBox="0 0 64 32" aria-hidden="true" focusable="false">
+      <rect x="21" y="6" width="12" height="4" rx="1.5" fill="#1f78ff"></rect>
+      <path d="M10 22h3l4-8c1.2-2.3 2.6-3.3 5-3.3h17.4c3.2 0 5 .9 6.9 3.5l3.2 4.4H54c2.2 0 4 1.8 4 4v2.3H6v-2.3c0-2.2 1.8-4 4-4Z" fill="currentColor"></path>
+      <circle cx="19" cy="25" r="4.5" fill="#20313f"></circle>
+      <circle cx="45" cy="25" r="4.5" fill="#20313f"></circle>
+      <circle cx="19" cy="25" r="2" fill="#f3f6f8"></circle>
+      <circle cx="45" cy="25" r="2" fill="#f3f6f8"></circle>
+      <path d="M20.2 13.6h9.8v5.3H17.4l2.8-4.6Z" fill="#dff2f7"></path>
+      <path d="M31.6 13.6h8.3c2.2 0 3.4.5 4.7 2.4l1.9 2.9H31.6v-5.3Z" fill="#dff2f7"></path>
+    </svg>
+  `;
 }
 
 function incrementStat(map, key, value) {

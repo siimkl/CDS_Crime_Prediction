@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Critical analysis of the support tool</title>
+  <link rel="stylesheet" href="critical_analysis.css">
+</head>
+<body>
+  <div class="analysis-shell">
+    <header class="analysis-header">
+      <div>
+        <div class="eyebrow">Critical analysis</div>
+        <h1>Two-year simulation of policing strategy feedback</h1>
+        <p class="header-copy">
+          Visualize how a patrol-planning specialist might use this system for two years, how
+          application-guided patrol choices reshape new incident data, and how that feedback loop
+          can produce long-run winners and losers across Tartu suburbs.
+        </p>
+      </div>
+      <a class="back-link" href="index.html">Back to forecasting map</a>
+    </header>
+
+    <section class="panel methodology-panel">
+      <div class="panel-kicker">Methodology</div>
+      <h2>How the two-year simulation works</h2>
+      <ul class="methodology-list">
+        <li>Start with the 28 Jan 2026 to 28 Apr 2026 suburb-level incident baseline.</li>
+        <li>Simulate eight quarters of patrol allocation, with more persistent attention in targeted minority and socially vulnerable areas.</li>
+        <li>Feed each quarter's patrol pattern back into the next quarter's recorded incident data to estimate longer-run winners, losers, and social side effects.</li>
+      </ul>
+    </section>
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <span class="summary-label">Baseline window</span>
+        <strong>28 Jan 2026 - 28 Apr 2026</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Simulated window</span>
+        <strong>28 Jan 2028 - 28 Apr 2028</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Simulated windows</span>
+        <strong>8 quarters</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Biggest improver</span>
+        <strong id="bestArea">Loading...</strong>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">Biggest deterioration</span>
+        <strong id="worstArea">Loading...</strong>
+      </div>
+    </section>
+
+    <section class="chart-grid">
+      <section class="panel">
+        <div class="panel-kicker">Feedback loop</div>
+        <h2>Patrol pressure over two years</h2>
+        <p class="panel-copy">
+          Areas with stronger minority and social-vulnerability markers attract more patrol pressure,
+          which keeps feeding the next round of model inputs.
+        </p>
+        <div id="patrolTrendChart" class="chart-frame line-chart"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-kicker">Recorded outcomes</div>
+        <h2>Incident index over two years</h2>
+        <p class="panel-copy">
+          The simulation treats the application as a force that changes recorded incident data, not just
+          underlying safety, so targeted areas can keep looking worse over time.
+        </p>
+        <div id="incidentTrendChart" class="chart-frame line-chart"></div>
+      </section>
+    </section>
+
+    <section class="panel">
+      <div class="panel-kicker">Winners and losers</div>
+      <h2>Outcome difference by suburb</h2>
+      <p class="panel-copy">
+        Negative values indicate improvement in recorded incident pressure; positive values indicate the
+        system has pushed the suburb into a worse measured position. Each row also shows the original
+        2026 window against the simulated 2028 window.
+      </p>
+      <div id="deltaChart" class="delta-chart"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-kicker">Distributional impact</div>
+      <h2>How winning and losing is expressed</h2>
+      <p class="panel-copy">
+        The table translates model-driven policing strategy into social effects: who benefits from lighter
+        touch, who absorbs more surveillance pressure, and where prestige and property pressure diverge.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Suburb</th>
+              <th>2026 incidents</th>
+              <th>2028 incidents</th>
+              <th>Patrol shift</th>
+              <th>Minority / vulnerable impact</th>
+              <th>Property price pressure</th>
+              <th>Prestige shift</th>
+              <th>Ghettoization risk</th>
+            </tr>
+          </thead>
+          <tbody id="impactTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel conclusions-panel">
+      <div class="panel-kicker">Final conclusions</div>
+      <div class="takeaway-banner">
+        <span class="takeaway-label">Core takeaway of the project</span>
+        <strong>This section summarizes the main recommendation from the full simulation.</strong>
+      </div>
+      <h2>Should local police implement this system?</h2>
+      <p id="recommendationLong" class="panel-copy">
+        Loading recommendation...
+      </p>
+      <ul class="conclusion-list" id="conclusionList"></ul>
+    </section>
+  </div>
+
+  <script src="embedded_dataset.js"></script>
+  <script src="critical_analysis.js"></script>
+</body>
+</html>

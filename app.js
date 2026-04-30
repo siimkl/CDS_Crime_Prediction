@@ -1,10 +1,11 @@
 const APP_CONFIG = {
   csvPath: "tartu_risk_dataset_2.csv",
-  playbackMs: 867,
+  playbackMs: 434,
 };
+const STARTUP_ACK_KEY = "tartuSafetyPrototypeNoticeAcceptedSession";
 
 const MAP_DEFAULT_VIEW = {
-  x: 0,
+  x: 40,
   y: 190,
   width: 1220,
   height: 1040,
@@ -39,11 +40,11 @@ const WEATHER_FACTORS = {
 };
 
 const WEATHER_LABELS = {
-  clear: "Clear mobility window",
-  rain: "Rain-suppressed movement",
-  snow: "Snow-limited circulation",
-  storm: "Storm disruption",
-  other_extremes: "Other extremes",
+  clear: "Weather: Clear",
+  rain: "Weather: Rain",
+  snow: "Weather: Snow",
+  storm: "Weather: Storm",
+  other_extremes: "Weather: Other extremes",
 };
 
 const DISTRICTS = [
@@ -271,7 +272,6 @@ const state = {
   step: 0,
   selectedArea: null,
   markerMap: new Map(),
-  referenceMap: new Map(),
   playing: false,
   playHandle: null,
   mapView: { ...MAP_DEFAULT_VIEW },
@@ -289,8 +289,59 @@ function bindStartupGate() {
   const acceptButton = document.getElementById("startupAccept");
   const exitButton = document.getElementById("startupExit");
   const gate = document.getElementById("startupGate");
+  const startupChecks = [
+    document.getElementById("startupAckAcademic"),
+    document.getElementById("startupAckCritical"),
+    document.getElementById("startupAckOperational"),
+  ];
+
+  const syncStartupAcceptState = () => {
+    const allChecked = startupChecks.every((checkbox) => checkbox?.checked);
+    acceptButton.disabled = !allChecked;
+  };
+
+  startupChecks.forEach((checkbox) => {
+    checkbox.checked = false;
+    checkbox.addEventListener("change", syncStartupAcceptState);
+  });
+  syncStartupAcceptState();
+
+  // Ignore any older persistent acceptance flag and use session-only state so
+  // the notice appears on first entry, but not again during internal navigation.
+  try {
+    window.localStorage.removeItem("tartuSafetyPrototypeNoticeAccepted");
+  } catch (error) {
+    // No-op: storage availability can vary by browser mode.
+  }
+
+  const hasAccepted = (() => {
+    try {
+      return window.sessionStorage.getItem(STARTUP_ACK_KEY) === "true";
+    } catch (error) {
+      return false;
+    }
+  })();
+
+  if (hasAccepted) {
+    gate.hidden = true;
+    gate.classList.add("hidden");
+    void init();
+    return;
+  }
+
+  gate.hidden = false;
+  gate.classList.remove("hidden");
 
   acceptButton.addEventListener("click", () => {
+    if (acceptButton.disabled) {
+      return;
+    }
+    try {
+      window.sessionStorage.setItem(STARTUP_ACK_KEY, "true");
+    } catch (error) {
+      // No-op: continue even if session storage is unavailable.
+    }
+    gate.hidden = true;
     gate.classList.add("hidden");
     void init();
   });
@@ -309,11 +360,13 @@ async function init() {
 
     state.model = model;
     state.forecast = forecast;
-    state.selectedArea = forecast.hours[0].sortedAreas[0].area;
+    state.selectedArea = DISTRICTS.some((district) => district.area === "Annelinn")
+      ? "Annelinn"
+      : forecast.hours[0].sortedAreas[0].area;
 
     applyMapView();
     createMarkers();
-    buildReferenceList();
+    buildAreaSelect();
     buildSliderScale();
     render();
     hideLoading();
@@ -325,18 +378,6 @@ async function init() {
 function bindControls() {
   document.getElementById("hourSlider").addEventListener("input", (event) => {
     state.step = Number(event.target.value);
-    stopPlayback();
-    render();
-  });
-
-  document.getElementById("stepBack").addEventListener("click", () => {
-    state.step = Math.max(0, state.step - 1);
-    stopPlayback();
-    render();
-  });
-
-  document.getElementById("stepForward").addEventListener("click", () => {
-    state.step = Math.min(47, state.step + 1);
     stopPlayback();
     render();
   });
@@ -361,6 +402,28 @@ function bindControls() {
     state.mapView = { ...MAP_DEFAULT_VIEW };
     applyMapView();
   });
+
+  const areaDropdown = document.getElementById("selectedAreaDropdown");
+  const areaTrigger = document.getElementById("selectedAreaTrigger");
+  areaTrigger.addEventListener("click", () => {
+    const isOpen = areaDropdown.classList.toggle("open");
+    areaTrigger.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!areaDropdown.contains(event.target)) {
+      closeAreaDropdown();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeAreaDropdown();
+    }
+  });
+
+  const selectedChart = document.getElementById("selectedForecastChart");
+  selectedChart.addEventListener("click", handleSelectedChartClick);
 }
 
 function bindMapInteractions() {
@@ -437,6 +500,30 @@ function handleMapPointerUp(event) {
 
   state.pan = null;
   mapSvg.classList.remove("is-dragging");
+}
+
+function handleSelectedChartClick(event) {
+  if (!state.forecast) {
+    return;
+  }
+
+  const chart = event.currentTarget;
+  const rect = chart.getBoundingClientRect();
+  if (!rect.width) {
+    return;
+  }
+
+  const width = 360;
+  const plotLeft = 18;
+  const plotRight = 18;
+  const plotWidth = width - plotLeft - plotRight;
+  const localX = ((event.clientX - rect.left) / rect.width) * width;
+  const normalized = clamp((localX - plotLeft) / plotWidth, 0, 1);
+  const nextStep = Math.round(normalized * (state.forecast.hours.length - 1));
+
+  state.step = clamp(nextStep, 0, state.forecast.hours.length - 1);
+  stopPlayback();
+  render();
 }
 
 function applyMapView() {
@@ -813,17 +900,30 @@ function createMarkers() {
 
     label.append(box, lineTwo, lineThree);
 
-    const hit = svgElement("polygon", {
-      class: "district-hit",
-      points: district.zone,
-    });
-
-    hit.addEventListener("click", () => {
+    const activateDistrict = () => {
       if (performance.now() < state.panSuppressClickUntil) {
         return;
       }
       state.selectedArea = district.area;
       render();
+    };
+
+    const hit = svgElement("polygon", {
+      class: "district-hit",
+      points: district.zone,
+    });
+
+    group.addEventListener("pointerdown", (event) => {
+      event.stopPropagation();
+    });
+
+    group.addEventListener("pointerup", (event) => {
+      event.stopPropagation();
+    });
+
+    group.addEventListener("click", (event) => {
+      event.stopPropagation();
+      activateDistrict();
     });
 
     zoneLayer.append(zone);
@@ -849,25 +949,22 @@ function createMarkers() {
   });
 }
 
-function buildReferenceList() {
-  const container = document.getElementById("districtReference");
-  container.innerHTML = "";
-  state.referenceMap.clear();
-
+function buildAreaSelect() {
+  const menu = document.getElementById("selectedAreaMenu");
+  menu.innerHTML = "";
   DISTRICTS.forEach((district) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "reference-row";
-    button.innerHTML = `
-      <span class="reference-number">${district.number}</span>
-      <span class="reference-name">${district.area}</span>
-    `;
-    button.addEventListener("click", () => {
+    const option = document.createElement("button");
+    option.type = "button";
+    option.className = "selected-area-option";
+    option.setAttribute("role", "option");
+    option.dataset.area = district.area;
+    option.textContent = district.area;
+    option.addEventListener("click", () => {
       state.selectedArea = district.area;
+      closeAreaDropdown();
       render();
     });
-    container.append(button);
-    state.referenceMap.set(district.area, button);
+    menu.append(option);
   });
 }
 
@@ -896,19 +993,20 @@ function render() {
   renderMap(hourData);
   renderSelected(hourData);
   renderRanking(hourData);
-  renderReferenceSelection();
   renderTimeline(hourData);
 }
 
 function renderSummary(hourData) {
-  document.getElementById("summaryHour").innerHTML =
-    formatForecastHourMarkup(hourData.timestamp);
-  document.getElementById("summaryCityTotal").textContent =
-    `${hourData.cityTotal.toFixed(2)} incidents`;
-  document.getElementById("summaryWeather").textContent =
-    WEATHER_LABELS[hourData.weather] ?? hourData.weather;
-  document.getElementById("summaryTopArea").textContent =
-    `${hourData.topArea.area} | ${hourData.topArea.riskScore}/10`;
+  const summaryHour = document.getElementById("summaryHour");
+  const summaryCityTotal = document.getElementById("summaryCityTotal");
+
+  if (summaryHour) {
+    summaryHour.innerHTML = formatForecastHourMarkup(hourData.timestamp);
+  }
+
+  if (summaryCityTotal) {
+    summaryCityTotal.textContent = `${hourData.cityTotal.toFixed(2)} incidents`;
+  }
 }
 
 function renderMap(hourData) {
@@ -954,14 +1052,14 @@ function renderSelected(hourData) {
     ?? hourData.sortedAreas[0];
   state.selectedArea = selected.area;
 
-  document.getElementById("selectedAreaName").textContent =
-    `${selected.number}. ${selected.area}`;
+  document.getElementById("selectedAreaTrigger").textContent = selected.area;
+  renderAreaDropdownSelection();
   document.getElementById("selectedRiskPill").textContent = `${selected.riskScore}/10`;
   document.getElementById("selectedRiskPill").style.background =
     `linear-gradient(135deg, ${riskColor(Math.max(1, selected.riskScore - 2))}, ${selected.riskColor})`;
   document.getElementById("selectedIncident").textContent = selected.incident.toFixed(2);
   document.getElementById("selectedPopulation").textContent = formatNumber(selected.population);
-  document.getElementById("selectedDensity").textContent = `${formatNumber(selected.density)} /km2`;
+  document.getElementById("selectedDensity").textContent = `${formatNumber(selected.density)} persons/km²`;
   document.getElementById("selectedConfidence").textContent = selected.confidence;
   document.getElementById("selectedRiskText").textContent = `${selected.riskScore}/10`;
   document.getElementById("selectedRiskBar").style.width = `${selected.riskScore * 10}%`;
@@ -971,11 +1069,242 @@ function renderSelected(hourData) {
     `${selected.nightlifeZone ? "Nightlife" : "No nightlife"} | ${selected.studentZone ? "Student" : "Non-student"}`;
   document.getElementById("selectedPerCapita").textContent =
     `${selected.per10k.toFixed(2)} / 10k residents`;
+  renderSelectedOutlookChart(selected.area);
   const selectedCopy = buildSelectedCopy(selected, hourData);
   document.getElementById("selectedPosture").textContent = selectedCopy.posture;
   const narrativeElement = document.getElementById("selectedNarrative");
   narrativeElement.textContent = "";
   narrativeElement.classList.add("hidden");
+}
+
+function renderSelectedOutlookChart(areaName) {
+  const chart = document.getElementById("selectedForecastChart");
+  if (!chart || !state.forecast) {
+    return;
+  }
+
+  const series = state.forecast.hours.map((hourData, index) => {
+    const entry = hourData.sortedAreas.find((area) => area.area === areaName);
+    if (!entry) {
+      return null;
+    }
+    return {
+      index,
+      timestamp: hourData.timestamp,
+      incident: entry.incident,
+      riskScore: entry.riskScore,
+    };
+  }).filter(Boolean);
+
+  if (!series.length) {
+    chart.replaceChildren();
+    return;
+  }
+
+  const chartTitle = document.getElementById("selectedChartTitle");
+  const chartPeak = document.getElementById("selectedChartPeak");
+  const chartStart = document.getElementById("selectedChartStart");
+  const chartMid = document.getElementById("selectedChartMid");
+  const chartEnd = document.getElementById("selectedChartEnd");
+  const chartActiveLegend = document.getElementById("selectedChartActiveLegend");
+  const peakPoint = series.reduce((peak, point) => (point.incident > peak.incident ? point : peak), series[0]);
+
+  chartTitle.textContent = `${areaName} next 48 hours`;
+  chartPeak.textContent = `Peak ${peakPoint.incident.toFixed(2)} | ${formatChartBadgeHour(peakPoint.timestamp)}`;
+  chartStart.textContent = formatChartAxisHour(series[0].timestamp);
+  chartMid.textContent = formatChartAxisHour(series[Math.floor((series.length - 1) / 2)].timestamp);
+  chartEnd.textContent = formatChartAxisHour(series[series.length - 1].timestamp);
+  chart.setAttribute("aria-label", `${areaName} 48-hour forecast with predicted incidents and risk score`);
+
+  const width = 360;
+  const height = 176;
+  const plotLeft = 18;
+  const plotRight = 18;
+  const plotTop = 14;
+  const plotBottom = 24;
+  const plotWidth = width - plotLeft - plotRight;
+  const plotHeight = height - plotTop - plotBottom;
+  const maxIncident = Math.max(...series.map((point) => point.incident), 0.5);
+  const currentPoint = series[state.step] ?? series[0];
+  const currentX = plotLeft + ((currentPoint.index / (series.length - 1)) * plotWidth);
+  const activeHourLabel = formatActiveChartHour(currentPoint.timestamp);
+
+  const mapX = (index) => plotLeft + ((index / (series.length - 1)) * plotWidth);
+  const mapIncidentY = (value) => plotTop + plotHeight - ((value / maxIncident) * plotHeight);
+  const mapRiskY = (value) => plotTop + plotHeight - (((value - 1) / 9) * plotHeight);
+
+  if (chartActiveLegend) {
+    chartActiveLegend.innerHTML = `<i class="legend-swatch current"></i>Active hour | ${activeHourLabel}`;
+  }
+
+  const incidentPoints = series
+    .map((point) => `${mapX(point.index).toFixed(2)},${mapIncidentY(point.incident).toFixed(2)}`)
+    .join(" ");
+  const riskPoints = series
+    .map((point) => `${mapX(point.index).toFixed(2)},${mapRiskY(point.riskScore).toFixed(2)}`)
+    .join(" ");
+  const incidentAreaPath = [
+    `M ${plotLeft} ${plotTop + plotHeight}`,
+    ...series.map((point, index) => `L ${mapX(index).toFixed(2)} ${mapIncidentY(point.incident).toFixed(2)}`),
+    `L ${plotLeft + plotWidth} ${plotTop + plotHeight}`,
+    "Z",
+  ].join(" ");
+
+  chart.replaceChildren();
+
+  [0, 0.25, 0.5, 0.75, 1].forEach((ratio) => {
+    chart.append(svgElement("line", {
+      x1: String(plotLeft),
+      y1: String((plotTop + (plotHeight * ratio)).toFixed(2)),
+      x2: String(plotLeft + plotWidth),
+      y2: String((plotTop + (plotHeight * ratio)).toFixed(2)),
+      stroke: "rgba(19, 49, 74, 0.10)",
+      "stroke-width": "1",
+    }));
+  });
+
+  [0, 12, 24, 36, 47].forEach((index) => {
+    chart.append(svgElement("line", {
+      x1: String(mapX(index).toFixed(2)),
+      y1: String(plotTop),
+      x2: String(mapX(index).toFixed(2)),
+      y2: String(plotTop + plotHeight),
+      stroke: "rgba(19, 49, 74, 0.07)",
+      "stroke-width": index === state.step ? "1.5" : "1",
+      "stroke-dasharray": index === state.step ? "0" : "3 5",
+    }));
+  });
+
+  chart.append(svgElement("rect", {
+    x: String((currentX - 9).toFixed(2)),
+    y: String(plotTop),
+    width: "18",
+    height: String(plotHeight),
+    rx: "9",
+    fill: "rgba(19, 49, 74, 0.08)",
+  }));
+
+  chart.append(svgElement("line", {
+    x1: String(currentX.toFixed(2)),
+    y1: String(plotTop),
+    x2: String(currentX.toFixed(2)),
+    y2: String(plotTop + plotHeight),
+    stroke: "#13314a",
+    "stroke-width": "3.2",
+  }));
+
+  chart.append(svgElement("path", {
+    d: incidentAreaPath,
+    fill: "rgba(19, 123, 114, 0.12)",
+  }));
+
+  chart.append(svgElement("polyline", {
+    points: incidentPoints,
+    fill: "none",
+    stroke: "#137b72",
+    "stroke-width": "3",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+  }));
+
+  chart.append(svgElement("polyline", {
+    points: riskPoints,
+    fill: "none",
+    stroke: "#c86b29",
+    "stroke-width": "2.5",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+  }));
+
+  chart.append(svgElement("circle", {
+    cx: String(currentX.toFixed(2)),
+    cy: String(mapIncidentY(currentPoint.incident).toFixed(2)),
+    r: "4.5",
+    fill: "#137b72",
+    stroke: "#ffffff",
+    "stroke-width": "2",
+  }));
+
+  chart.append(svgElement("circle", {
+    cx: String(currentX.toFixed(2)),
+    cy: String(mapRiskY(currentPoint.riskScore).toFixed(2)),
+    r: "4.5",
+    fill: "#c86b29",
+    stroke: "#ffffff",
+    "stroke-width": "2",
+  }));
+
+  const labelWidth = Math.min(132, Math.max(86, Math.round(activeHourLabel.length * 6.2) + 18));
+  const labelX = clamp(currentX - (labelWidth / 2), plotLeft, plotLeft + plotWidth - labelWidth);
+  const labelRect = svgElement("rect", {
+    x: String(labelX.toFixed(2)),
+    y: String((plotTop + 8).toFixed(2)),
+    width: String(labelWidth),
+    height: "22",
+    rx: "11",
+    fill: "#13314a",
+    opacity: "0.96",
+  });
+  chart.append(labelRect);
+
+  const labelText = svgElement("text", {
+    x: String((labelX + (labelWidth / 2)).toFixed(2)),
+    y: String((plotTop + 23).toFixed(2)),
+    fill: "#ffffff",
+    "font-size": "10",
+    "font-weight": "700",
+    "text-anchor": "middle",
+  });
+  labelText.textContent = activeHourLabel;
+  chart.append(labelText);
+
+  const incidentTopLabel = svgElement("text", {
+    x: String(plotLeft),
+    y: String(plotTop - 2),
+    fill: "#137b72",
+    "font-size": "10",
+    "font-weight": "700",
+  });
+  incidentTopLabel.textContent = `${maxIncident.toFixed(1)} inc`;
+  chart.append(incidentTopLabel);
+
+  const incidentBottomLabel = svgElement("text", {
+    x: String(plotLeft),
+    y: String(plotTop + plotHeight + 16),
+    fill: "#6a7c8f",
+    "font-size": "10",
+    "font-weight": "600",
+  });
+  incidentBottomLabel.textContent = "0";
+  chart.append(incidentBottomLabel);
+
+  const riskTopLabel = svgElement("text", {
+    x: String(plotLeft + plotWidth - 26),
+    y: String(plotTop - 2),
+    fill: "#c86b29",
+    "font-size": "10",
+    "font-weight": "700",
+  });
+  riskTopLabel.textContent = "10/10";
+  chart.append(riskTopLabel);
+
+  const riskBottomLabel = svgElement("text", {
+    x: String(plotLeft + plotWidth - 22),
+    y: String(plotTop + plotHeight + 16),
+    fill: "#6a7c8f",
+    "font-size": "10",
+    "font-weight": "600",
+  });
+  riskBottomLabel.textContent = "1/10";
+  chart.append(riskBottomLabel);
+}
+
+function renderAreaDropdownSelection() {
+  document.querySelectorAll(".selected-area-option").forEach((option) => {
+    const isActive = option.dataset.area === state.selectedArea;
+    option.classList.toggle("active", isActive);
+    option.setAttribute("aria-selected", String(isActive));
+  });
 }
 
 function renderRanking(hourData) {
@@ -1014,15 +1343,24 @@ function renderRanking(hourData) {
   });
 }
 
-function renderReferenceSelection() {
-  state.referenceMap.forEach((button, area) => {
-    button.classList.toggle("active", area === state.selectedArea);
-  });
+function renderTimeline(hourData) {
+  const timelineWindow = document.getElementById("timelineWindow");
+  const timelineContext = document.getElementById("timelineContext");
+
+  if (timelineWindow) {
+    timelineWindow.textContent = formatTimelineWindow(hourData.timestamp);
+  }
+
+  if (timelineContext) {
+    timelineContext.textContent = WEATHER_LABELS[hourData.weather] ?? hourData.weather;
+  }
 }
 
-function renderTimeline(hourData) {
-  document.getElementById("timelineStamp").textContent =
-    `${formatHourStamp(hourData.timestamp)} | ${WEATHER_LABELS[hourData.weather] ?? hourData.weather}`;
+function closeAreaDropdown() {
+  const areaDropdown = document.getElementById("selectedAreaDropdown");
+  const areaTrigger = document.getElementById("selectedAreaTrigger");
+  areaDropdown.classList.remove("open");
+  areaTrigger.setAttribute("aria-expanded", "false");
 }
 
 function updateTimelineProgress(slider) {
@@ -1084,7 +1422,7 @@ function buildSelectedCopy(selected, hourData) {
   if (selected.riskScore >= 8) {
     posture = "Visible patrol presence and fast-response positioning.";
   } else if (selected.riskScore >= 6) {
-    posture = "Targeted patrol pass during this hour window.";
+    posture = "Targeted patrol pass for this hour.";
   } else {
     posture = "Routine coverage with watchlist awareness.";
   }
@@ -1147,6 +1485,36 @@ function formatHourStamp(timestamp) {
   }).format(timestamp);
 }
 
+function formatTimelineWindow(timestamp) {
+  const end = new Date(timestamp.getTime() + 3600_000);
+  const startLabel = new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
+
+  const sameDay = timestamp.getFullYear() === end.getFullYear()
+    && timestamp.getMonth() === end.getMonth()
+    && timestamp.getDate() === end.getDate();
+
+  const endLabel = sameDay
+    ? new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(end)
+    : new Intl.DateTimeFormat("en-GB", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(end);
+
+  return `${startLabel} - ${endLabel}`;
+}
+
 function formatForecastHourMarkup(timestamp) {
   const datePart = new Intl.DateTimeFormat("en-GB", {
     weekday: "short",
@@ -1158,6 +1526,33 @@ function formatForecastHourMarkup(timestamp) {
     minute: "2-digit",
   }).format(timestamp);
   return `${datePart}, <span class="summary-hour-time">${timePart}</span>`;
+}
+
+function formatChartAxisHour(timestamp) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
+}
+
+function formatChartBadgeHour(timestamp) {
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
+}
+
+function formatActiveChartHour(timestamp) {
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
 }
 
 function compactTick(timestamp) {

@@ -96,29 +96,35 @@
             <p class="legend-note">
               Risk score combines predicted incidents with population-adjusted exposure.
             </p>
-            <div class="reference-block">
-              <div class="panel-kicker">Map reference</div>
-              <div id="districtReference" class="reference-list"></div>
-            </div>
           </section>
-        </div>
-        <div class="summary-strip">
-          <div class="summary-box context-highlight" id="summaryHourCard">
-            <div class="summary-label">Forecast hour</div>
-            <div class="summary-value" id="summaryHour">-</div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">Predicted city incidents</div>
-            <div class="summary-value" id="summaryCityTotal">-</div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">City weather context</div>
-            <div class="summary-value" id="summaryWeather">-</div>
-          </div>
-          <div class="summary-box">
-            <div class="summary-label">Highest-risk suburb</div>
-            <div class="summary-value" id="summaryTopArea">-</div>
-          </div>
+
+          <section class="panel plan-panel">
+            <div class="panel-header tight">
+              <div>
+                <div class="panel-kicker">Decision support</div>
+                <h3>Patrol planning</h3>
+              </div>
+            </div>
+            <p class="plan-copy">
+              Turn the 48-hour forecast into direct patrol guidance.
+            </p>
+            <a class="plan-button" href="policing_plan.html">Generate 48-hour policing plan</a>
+          </section>
+
+          <section class="panel critique-panel">
+            <div class="panel-header tight">
+              <div>
+                <div class="panel-kicker">Critical analysis</div>
+                <h3>Long-run effects</h3>
+              </div>
+            </div>
+            <p class="critique-copy">
+              Review how two years of repeated patrol allocation can create winners,
+              losers, and cumulative social effects across Tartu suburbs.
+            </p>
+            <a class="critique-button" href="critical_analysis.html">Open critical analysis</a>
+          </section>
+
         </div>
       </header>
 
@@ -127,31 +133,56 @@
           <div class="panel-header">
             <div>
               <div class="panel-kicker">Selected suburb</div>
-              <h2 id="selectedAreaName">Loading...</h2>
+              <div id="selectedAreaDropdown" class="selected-area-dropdown">
+                <button
+                  id="selectedAreaTrigger"
+                  class="selected-area-trigger"
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  Loading...
+                </button>
+                <div id="selectedAreaMenu" class="selected-area-menu" role="listbox" aria-label="Selected suburb"></div>
+              </div>
             </div>
             <div class="score-pill" id="selectedRiskPill">-</div>
           </div>
+          <section class="selected-chart-shell" aria-labelledby="selectedChartTitle">
+            <div class="selected-chart-header">
+              <div>
+                <div class="metric-label">48-hour suburb outlook</div>
+                <strong id="selectedChartTitle">Loading chart...</strong>
+              </div>
+              <div class="selected-chart-badge" id="selectedChartPeak">Peak -</div>
+            </div>
+            <svg
+              id="selectedForecastChart"
+              class="selected-forecast-chart"
+              viewBox="0 0 360 176"
+              role="img"
+              aria-label="48-hour selected suburb forecast chart"
+            ></svg>
+            <div class="selected-chart-axis">
+              <span id="selectedChartStart">Start</span>
+              <span id="selectedChartMid">+24h</span>
+              <span id="selectedChartEnd">+48h</span>
+            </div>
+            <div class="selected-chart-legend">
+              <span><i class="legend-swatch incidents"></i>Predicted incidents</span>
+              <span><i class="legend-swatch risk"></i>Risk score</span>
+              <span id="selectedChartActiveLegend"><i class="legend-swatch current"></i>Active hour</span>
+            </div>
+          </section>
           <div class="metric-grid">
             <div class="metric">
               <span class="metric-label">Predicted incidents</span>
               <strong id="selectedIncident">-</strong>
             </div>
             <div class="metric">
-              <span class="metric-label">Population</span>
-              <strong id="selectedPopulation">-</strong>
-            </div>
-            <div class="metric">
-              <span class="metric-label">Density</span>
-              <strong id="selectedDensity">-</strong>
-            </div>
-            <div class="metric">
               <span class="metric-label">Forecast confidence</span>
               <strong id="selectedConfidence">-</strong>
             </div>
-          </div>
-          <div class="posture-card">
-            <span class="metric-label">Recommended policing/patrolling strategy</span>
-            <strong id="selectedPosture">-</strong>
           </div>
           <div class="risk-bar-shell">
             <div class="risk-bar-label">
@@ -162,44 +193,45 @@
               <div class="risk-bar-fill" id="selectedRiskBar"></div>
             </div>
           </div>
+          <div class="posture-card">
+            <div class="posture-visual">
+              <img
+                src="assets/patrol-vehicle-card.png"
+                alt="Police patrol vehicle"
+                class="posture-vehicle-image"
+              >
+            </div>
+            <div class="posture-copy">
+              <span class="metric-label">Recommended policing strategy</span>
+              <strong id="selectedPosture">-</strong>
+            </div>
+          </div>
           <div class="detail-list">
             <div><span>Foot traffic</span><strong id="selectedFootTraffic">-</strong></div>
             <div><span>Area type</span><strong id="selectedAreaType">-</strong></div>
+            <div><span>Population</span><strong id="selectedPopulation">-</strong></div>
+            <div><span>Population density</span><strong id="selectedDensity">-</strong></div>
             <div><span>Nightlife / student</span><strong id="selectedLifestyle">-</strong></div>
             <div><span>Population pressure</span><strong id="selectedPerCapita">-</strong></div>
           </div>
           <p class="selected-note" id="selectedNarrative"></p>
         </section>
-
-        <section class="panel plan-panel">
-          <div class="panel-header tight">
-            <div>
-              <div class="panel-kicker">Decision support</div>
-              <h3>Patrol planning</h3>
-            </div>
-          </div>
-          <p class="plan-copy">
-            Turn the 48-hour forecast into direct patrol guidance.
-          </p>
-          <a class="plan-button" href="policing_plan.html">Generate 48-hour policing plan</a>
-        </section>
       </aside>
 
-      <footer class="hud bottom-hud">
-        <div class="timeline-head">
-          <div class="timeline-title">
-            <div class="panel-kicker">48-hour outlook</div>
-            <div id="timelineStamp" class="timeline-stamp">Loading forecast...</div>
+        <footer class="hud bottom-hud">
+          <div class="panel-kicker timeline-kicker">48-hour outlook</div>
+          <div class="timeline-head">
+            <div class="timeline-meta">
+              <div id="timelineWindow" class="timeline-window">Loading forecast...</div>
+              <div id="timelineContext" class="timeline-context">Preparing weather context...</div>
+            </div>
+            <div class="timeline-controls">
+              <button id="playToggle" class="control-button primary" type="button">Run 48h Forecast</button>
+            </div>
           </div>
-          <div class="timeline-controls">
-            <button id="stepBack" class="control-button" type="button">-1h</button>
-            <button id="playToggle" class="control-button primary" type="button">Run 48h Forecast</button>
-            <button id="stepForward" class="control-button" type="button">+1h</button>
-          </div>
-        </div>
-        <input id="hourSlider" class="timeline-slider" type="range" min="0" max="47" step="1" value="0">
-        <div id="sliderScale" class="slider-scale"></div>
-      </footer>
+          <input id="hourSlider" class="timeline-slider" type="range" min="0" max="47" step="1" value="0">
+          <div id="sliderScale" class="slider-scale"></div>
+        </footer>
 
       <div id="loadingState" class="loading-state">
         <div class="loading-card">
@@ -215,7 +247,7 @@
         </div>
       </div>
 
-        <div id="startupGate" class="startup-gate">
+      <div id="startupGate" class="startup-gate hidden" hidden>
           <div class="startup-card">
             <div class="eyebrow">Important notice</div>
             <h2>Prototype system notice</h2>
@@ -226,6 +258,10 @@
                 This application is a prototype decision-support tool developed for academic project work.
                 It is not an operational police information system.
               </p>
+              <label class="startup-check">
+                <input id="startupAckAcademic" type="checkbox">
+                <span>I understand this is an academic prototype, not a live police system.</span>
+              </label>
             </div>
 
             <div class="startup-emphasis">
@@ -235,6 +271,10 @@
                 require careful scrutiny, and how they can be misleading or inappropriate when presented
                 as ready-made support for real public-safety decision-making.
               </p>
+              <label class="startup-check">
+                <input id="startupAckCritical" type="checkbox">
+                <span>I understand the system is also a critical demonstration, not a neutral solution.</span>
+              </label>
             </div>
 
             <div class="startup-warning-block">
@@ -243,10 +283,14 @@
                 Forecasts, risk scores, and recommended strategies shown here are illustrative and should
                 not be relied upon for real-world policing, emergency response, or public-safety decisions.
               </p>
+              <label class="startup-check">
+                <input id="startupAckOperational" type="checkbox">
+                <span>I understand these forecasts and recommendations are not for real operational use.</span>
+              </label>
             </div>
 
             <div class="startup-actions">
-              <button id="startupAccept" class="control-button primary" type="button">Understood</button>
+              <button id="startupAccept" class="control-button primary" type="button" disabled>Understood</button>
               <button id="startupExit" class="control-button" type="button">Exit</button>
             </div>
           </div>

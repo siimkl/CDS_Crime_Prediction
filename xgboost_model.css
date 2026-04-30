@@ -35,7 +35,6 @@ code {
 }
 
 .model-header,
-.notice-panel,
 .panel {
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -67,7 +66,6 @@ thead th {
 }
 
 .header-copy,
-.notice-panel p,
 .panel p,
 .bullet-list {
   color: #304050;
@@ -82,23 +80,27 @@ thead th {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex: 0 0 auto;
   min-height: 42px;
-  padding: 0 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(18, 50, 74, 0.10);
-  background: rgba(255, 255, 255, 0.84);
-  color: var(--navy);
-  text-decoration: none;
-}
-
-.notice-panel {
-  margin-top: 16px;
-  padding: 16px 18px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(19, 123, 114, 0.18);
   background: linear-gradient(180deg, rgba(220, 244, 240, 0.96), rgba(240, 249, 247, 0.92));
+  box-shadow: 0 12px 24px rgba(19, 123, 114, 0.12);
+  color: #0f5f58;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
-.notice-panel p {
-  margin: 8px 0 0;
+.back-link:hover,
+.back-link:focus {
+  border-color: rgba(19, 123, 114, 0.30);
+  background: linear-gradient(180deg, rgba(206, 239, 233, 0.98), rgba(233, 247, 244, 0.94));
+  box-shadow: 0 16px 28px rgba(19, 123, 114, 0.16);
+  transform: translateY(-1px);
+  outline: none;
 }
 
 .content-grid {
@@ -110,6 +112,10 @@ thead th {
 
 .panel {
   padding: 18px 20px;
+}
+
+.content-grid + .panel {
+  margin-top: 18px;
 }
 
 .panel h2 {
@@ -162,8 +168,44 @@ tbody tr:nth-child(even) {
   background: rgba(245, 249, 248, 0.76);
 }
 
+.proposal-panel {
+  margin-top: 18px;
+}
+
+.proposal-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.proposal-grid-secondary {
+  margin-top: 16px;
+}
+
+.proposal-card {
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(18, 50, 74, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.proposal-card h3 {
+  margin: 0 0 10px;
+  line-height: 1.14;
+}
+
+.proposal-card p:last-of-type,
+.proposal-card .bullet-list:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 900px) {
   .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .proposal-grid {
     grid-template-columns: 1fr;
   }
 }

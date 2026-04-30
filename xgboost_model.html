@@ -20,15 +20,6 @@
       <a class="back-link" href="index.html">Back to forecasting map</a>
     </header>
 
-    <section class="notice-panel">
-      <div class="eyebrow">Important note</div>
-      <p>
-        The live application is a school-work prototype. The interface presents an
-        <strong>XGBoost hourly forecast</strong>, but the current demo implementation is a transparent,
-        rule-based approximation of how an operational ML forecasting workflow could behave.
-      </p>
-    </section>
-
     <section class="content-grid">
       <section class="panel">
         <div class="panel-kicker">Part 1</div>
@@ -174,6 +165,109 @@
           <li>automatic refresh from newly ingested police and weather feeds</li>
         </ul>
       </section>
+    </section>
+
+    <section class="panel proposal-panel">
+      <div class="panel-kicker">Next-generation concept</div>
+      <h2>How the model and technology could be improved</h2>
+      <p>
+        A stronger future version would go beyond the current district-level prototype and evolve into
+        a richer operational forecasting service. The main upgrade path is to add more informative features,
+        more granular spatial modeling, live API integrations, and a scalable product layer around the map.
+      </p>
+
+      <div class="proposal-grid">
+        <article class="proposal-card">
+          <h3>1. Richer feature engineering</h3>
+          <p>
+            The next model should ingest many more predictive features. Examples include incident category
+            detail, such as whether the event was traffic-related, disturbance-related, or another specific
+            public-order type. That would let the model distinguish between very different demand patterns
+            instead of learning only one generic incident-count signal.
+          </p>
+          <ul class="bullet-list">
+            <li>incident category and subcategory</li>
+            <li>traffic-specific versus public-order-specific signals</li>
+            <li>event calendars, paydays, school cycles, and nightlife seasonality</li>
+            <li>lagged history, persistence features, and confidence intervals</li>
+          </ul>
+        </article>
+
+        <article class="proposal-card">
+          <h3>2. Finer GIS and spatial resolution</h3>
+          <p>
+            Instead of forecasting only by suburb, the city could be divided into a much finer GIS grid,
+            for example a <strong>100 x 100 meter</strong> lattice. That would produce a more realistic map
+            of hot corridors, nightlife clusters, transport routes, and recurring micro-locations.
+          </p>
+          <ul class="bullet-list">
+            <li>100 x 100 meter grid instead of suburb-only aggregation</li>
+            <li>street-network, transport-node, and land-use context</li>
+            <li>better distinction between corridor effects and broad district averages</li>
+          </ul>
+        </article>
+
+        <article class="proposal-card">
+          <h3>3. Live APIs and continuously refreshed predictions</h3>
+          <p>
+            The application could communicate with weather services through APIs and use live weather feeds
+            when computing each new hourly forecast. In a fuller public-sector ecosystem, the system could
+            also ingest near-real-time incident counts from aggregated public APIs and refresh each area-hour
+            prediction automatically.
+          </p>
+          <ul class="bullet-list">
+            <li>live weather API integration</li>
+            <li>future aggregated incident feeds from public-sector APIs</li>
+            <li>hourly refresh cycle for every area and every forecast step</li>
+          </ul>
+        </article>
+
+        <article class="proposal-card">
+          <h3>4. Interactive product layer</h3>
+          <p>
+            The map application itself is already the right direction: an interactive Tartu city map that
+            shows the next 48 hours of estimated public-order load by area, based on historical patterns,
+            weather, weekday structure, and events. The stronger version would keep the heatmap, the hourly
+            slider, the numerical incident forecast, and the risk-score overlay, but drive them from a
+            continuously updated production model.
+          </p>
+          <p>
+            In that setup, the user could inspect each area hour by hour, view risk scores directly on the
+            map, and read clearer risk interpretations below the legend or in supporting panels.
+          </p>
+        </article>
+      </div>
+
+      <div class="proposal-grid proposal-grid-secondary">
+        <article class="proposal-card">
+          <h3>5. Scalable service concept</h3>
+          <p>
+            The same logic could be scaled from one city to a county-level or state-level service. Tartu
+            would act as the pilot project, and the technical stack could then be extended gradually to new
+            territories without changing the basic forecasting concept.
+          </p>
+          <p>
+            One possible product concept is <strong>CityWatch.ai</strong>: a licensed forecasting and map
+            plugin that a local government could embed into its own city website or run on a dedicated
+            public-safety page.
+          </p>
+        </article>
+
+        <article class="proposal-card">
+          <h3>6. Operating model and commercialization</h3>
+          <p>
+            In that scenario, the municipality would pay a service license fee, for example
+            <strong>EUR 1000 per month</strong>, while also supplying the aggregated incident feed through
+            cooperation with local police. Because the service would work with area-level aggregated counts
+            rather than direct personal identifiers, the data model could remain relatively lightweight while
+            still being operationally useful.
+          </p>
+          <p>
+            This would turn the prototype from a one-off demonstration into a reusable forecasting service
+            with a clearer ownership model, maintenance path, and deployment story.
+          </p>
+        </article>
+      </div>
     </section>
   </div>
 </body>
