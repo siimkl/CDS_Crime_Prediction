@@ -20,6 +20,47 @@
       <a class="back-link" href="index.html">Back to forecasting map</a>
     </header>
 
+    <section class="methodology-warning" aria-labelledby="methodologyWarningTitle">
+      <div class="eyebrow">Critical methodology explanation</div>
+      <h2 id="methodologyWarningTitle">This model is also human work</h2>
+      <p class="methodology-lede">
+        The model is not a neutral technical object. It is built from human decisions about what to
+        predict, which algorithm to trust, which features to include, how to categorize places, how to
+        weight errors, and how to translate predictions into operational risk.
+      </p>
+      <div class="methodology-grid">
+        <article class="methodology-step">
+          <span>1</span>
+          <p>
+            Choosing XGBoost is already a design choice. Someone decided that a tree-based supervised
+            model was the right framing, instead of a simpler baseline, a spatial model, a causal model,
+            a simulation model, or no predictive model at all.
+          </p>
+        </article>
+        <article class="methodology-step">
+          <span>2</span>
+          <p>
+            Defining the target and features is subjective work. Decisions such as predicting
+            <code>incident_count</code>, using area-hour history, encoding weather, or including
+            nightlife, student, vulnerability, and density markers shape what the model can learn.
+          </p>
+        </article>
+        <article class="methodology-step">
+          <span>3</span>
+          <p>
+            Tuning, validation, thresholds, smoothing, and risk-band design are also human choices.
+            Different people could reasonably choose different horizons, error metrics, feature sets,
+            weights, and categories, producing different outputs from the same city.
+          </p>
+        </article>
+      </div>
+      <p class="methodology-impact">
+        All model outcomes inherit this human design work. The forecast is an accumulation of choices,
+        assumptions, local know-how, constraints, and omissions. It can be done in very different ways,
+        so its outputs should be read as situated estimates, not neutral facts.
+      </p>
+    </section>
+
     <section class="content-grid">
       <section class="panel">
         <div class="panel-kicker">Part 1</div>
