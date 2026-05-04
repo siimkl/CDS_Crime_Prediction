@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Predicting High-Risk Crime Areas in Tartu - A3 Tiled Poster</title>
+  <style>
+    @page {
+      size: 297mm 420mm;
+      margin: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 297mm;
+      background: #d9dde2;
+    }
+
+    body {
+      display: grid;
+      grid-template-columns: 297mm;
+      gap: 10mm;
+      padding: 10mm;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .tile {
+      position: relative;
+      width: 297mm;
+      height: 420mm;
+      overflow: hidden;
+      background: #f7f8f3;
+      box-shadow: 0 8mm 20mm rgba(28, 41, 54, 0.2);
+      break-after: page;
+      page-break-after: always;
+    }
+
+    .tile:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+
+    iframe {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 594mm;
+      height: 841mm;
+      border: 0;
+      overflow: hidden;
+    }
+
+    .right iframe {
+      left: -297mm;
+    }
+
+    .bottom iframe {
+      top: -420mm;
+    }
+
+    .tile-label {
+      position: absolute;
+      z-index: 2;
+      right: 4mm;
+      bottom: 4mm;
+      padding: 1.6mm 2.4mm;
+      border: 0.3mm solid rgba(16, 45, 61, 0.35);
+      background: rgba(255, 255, 255, 0.86);
+      color: rgba(16, 45, 61, 0.72);
+      font: 700 8pt Arial, sans-serif;
+      letter-spacing: 0.3pt;
+    }
+
+    @media print {
+      html,
+      body {
+        background: #ffffff;
+      }
+
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      .tile {
+        box-shadow: none;
+      }
+
+      .tile-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="tile top left" aria-label="A3 page 1: top-left quarter of the A1 poster">
+    <iframe src="index.html" title="Top-left quarter of the A1 poster" scrolling="no"></iframe>
+    <span class="tile-label">1 / 4 - top left</span>
+  </section>
+  <section class="tile top right" aria-label="A3 page 2: top-right quarter of the A1 poster">
+    <iframe src="index.html" title="Top-right quarter of the A1 poster" scrolling="no"></iframe>
+    <span class="tile-label">2 / 4 - top right</span>
+  </section>
+  <section class="tile bottom left" aria-label="A3 page 3: bottom-left quarter of the A1 poster">
+    <iframe src="index.html" title="Bottom-left quarter of the A1 poster" scrolling="no"></iframe>
+    <span class="tile-label">3 / 4 - bottom left</span>
+  </section>
+  <section class="tile bottom right" aria-label="A3 page 4: bottom-right quarter of the A1 poster">
+    <iframe src="index.html" title="Bottom-right quarter of the A1 poster" scrolling="no"></iframe>
+    <span class="tile-label">4 / 4 - bottom right</span>
+  </section>
+</body>
+</html>
