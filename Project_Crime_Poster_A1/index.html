@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predicting High-Risk Crime Areas in Tartu - A1 Poster</title>
+  <style>
+    @page {
+      size: 594mm 841mm;
+      margin: 0;
+    }
+
+    :root {
+      --paper: #fbfcf8;
+      --ink: #11181c;
+      --muted: #4c5b63;
+      --line: #ccd7dc;
+      --panel: #ffffff;
+      --soft: #eef5f2;
+      --teal: #047a74;
+      --blue: #225c9c;
+      --amber: #d99a25;
+      --red: #c33b32;
+      --deep: #102b3c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--ink);
+      background: #dfe7eb;
+      font-family: Aptos, "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      padding: 14px;
+    }
+
+    .poster {
+      width: 594mm;
+      height: 841mm;
+      margin: 0 auto;
+      padding: 14mm;
+      display: grid;
+      grid-template-rows: 110mm 1fr 70mm;
+      gap: 7mm;
+      background:
+        linear-gradient(90deg, rgba(4, 122, 116, 0.08) 0, rgba(4, 122, 116, 0.08) 1.2mm, transparent 1.2mm),
+        linear-gradient(180deg, #ffffff 0%, var(--paper) 100%);
+      box-shadow: 0 16px 50px rgba(16, 43, 60, 0.25);
+      overflow: hidden;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr 128mm;
+      gap: 12mm;
+      align-items: end;
+      padding-bottom: 5mm;
+      border-bottom: 1.8mm solid var(--deep);
+    }
+
+    .kicker {
+      margin: 0 0 4mm;
+      color: var(--teal);
+      font-size: 18pt;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 415mm;
+      font-size: 96pt;
+      line-height: 0.94;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin: 6mm 0 0;
+      max-width: 380mm;
+      color: var(--deep);
+      font-size: 30pt;
+      font-weight: 650;
+      line-height: 1.12;
+    }
+
+    .author-card {
+      border-left: 2mm solid var(--teal);
+      padding: 5mm 0 5mm 7mm;
+      background: rgba(238, 245, 242, 0.72);
+    }
+
+    .author-card p {
+      margin: 0 0 3mm;
+      font-size: 24pt;
+      line-height: 1.15;
+    }
+
+    .author-list {
+      margin: 0;
+      color: var(--deep);
+      font-size: 21pt;
+      line-height: 1.12;
+    }
+
+    .author-list b {
+      color: var(--deep);
+      font-size: inherit;
+      font-weight: 850;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 1fr);
+      gap: 11mm;
+      min-height: 0;
+    }
+
+    .column {
+      display: grid;
+      align-content: start;
+      gap: 5mm;
+      min-width: 0;
+    }
+
+    .column > section,
+    .column > figure {
+      width: 100%;
+      min-width: 0;
+    }
+
+    section,
+    figure {
+      margin: 0;
+      break-inside: avoid;
+    }
+
+    .block {
+      padding: 5mm;
+      border: 0.75mm solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      overflow: hidden;
+    }
+
+    .block.tint {
+      background: var(--soft);
+      border-color: rgba(4, 122, 116, 0.25);
+    }
+
+    .block.warn {
+      background: #fff7e8;
+      border-color: rgba(217, 154, 37, 0.34);
+    }
+
+    .block.critical {
+      background: #fff2ef;
+      border-color: rgba(195, 59, 50, 0.34);
+    }
+
+    h2 {
+      margin: 0 0 3mm;
+      color: var(--deep);
+      font-size: 40pt;
+      line-height: 0.98;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 2.4mm;
+      color: var(--deep);
+      font-size: 27pt;
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    p,
+    li {
+      font-size: 24pt;
+      line-height: 1.12;
+    }
+
+    p {
+      margin: 0 0 3mm;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 7mm;
+    }
+
+    li {
+      margin: 0 0 2mm;
+    }
+
+    li:last-child {
+      margin-bottom: 0;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3mm;
+      margin-top: 4mm;
+    }
+
+    .metric {
+      padding: 4mm;
+      background: #f2f7f8;
+      border: 0.55mm solid rgba(34, 92, 156, 0.16);
+    }
+
+    .metric b {
+      display: block;
+      color: var(--blue);
+      font-size: 32pt;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 1.5mm;
+      color: var(--muted);
+      font-size: 16pt;
+      line-height: 1.08;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 3.5mm minmax(0, 1.05fr) 3.5mm minmax(0, 0.95fr) 3.5mm minmax(0, 0.9fr) 3.5mm minmax(0, 0.95fr);
+      gap: 0.8mm;
+      align-items: center;
+      margin-top: 4mm;
+    }
+
+    .pipe-step {
+      min-height: 17mm;
+      min-width: 0;
+      padding: 3mm 1.4mm;
+      color: #fff;
+      background: var(--deep);
+      font-size: 12.8pt;
+      font-weight: 750;
+      line-height: 1.05;
+      text-align: center;
+      overflow-wrap: normal;
+      word-break: normal;
+    }
+
+    .pipe-arrow {
+      color: var(--teal);
+      font-size: 21pt;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .pipe-step:last-child {
+      font-size: 11.5pt;
+      white-space: nowrap;
+    }
+
+    .model-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2.6mm;
+      font-size: 13.5pt;
+      line-height: 1.08;
+    }
+
+    .model-table th,
+    .model-table td {
+      padding: 1.4mm 1.5mm;
+      border: 0.42mm solid var(--line);
+      vertical-align: top;
+    }
+
+    .model-table th {
+      color: var(--deep);
+      background: var(--soft);
+      font-weight: 850;
+      text-align: left;
+    }
+
+    .model-table td:first-child {
+      color: var(--deep);
+      font-weight: 850;
+    }
+
+    .model-note,
+    .caption {
+      margin-top: 2.8mm;
+      color: var(--muted);
+      font-size: 18pt;
+      font-weight: 500;
+      line-height: 1.14;
+    }
+
+    .model-note strong,
+    .caption strong {
+      color: var(--deep);
+      font-weight: 850;
+    }
+
+    .visual-card {
+      padding: 4.5mm;
+      border: 0.75mm solid var(--line);
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .visual-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .confusion-image {
+      height: 148mm;
+    }
+
+    .center-confusion .map-svg,
+    .center-confusion .legend,
+    .center-confusion .legend-labels {
+      display: none;
+    }
+
+    .visual-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 4mm;
+      margin-bottom: 3mm;
+    }
+
+    .visual-title h2 {
+      margin: 0;
+      font-size: 38pt;
+    }
+
+    .visual-title span {
+      color: var(--muted);
+      font-size: 16pt;
+      font-weight: 700;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .map-svg {
+      height: 160mm;
+    }
+
+    .chart-svg {
+      height: 66mm;
+    }
+
+    .axis {
+      stroke: #24353d;
+      stroke-width: 3;
+    }
+
+    .grid-line {
+      stroke: rgba(17, 24, 28, 0.13);
+      stroke-width: 2;
+    }
+
+    .chart-label {
+      fill: var(--muted);
+      font-size: 34px;
+      font-weight: 650;
+    }
+
+    .chart-value {
+      fill: var(--deep);
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1mm;
+      margin-top: 2mm;
+    }
+
+    .legend span {
+      height: 5mm;
+    }
+
+    .legend-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 15pt;
+      font-weight: 700;
+      margin-top: 1mm;
+    }
+
+    .r1 { fill: #dcefe6; }
+    .r2 { fill: #b7ded2; }
+    .r3 { fill: #8ac9bf; }
+    .r4 { fill: #f0d575; }
+    .r5 { fill: #ebb64a; }
+    .r6 { fill: #e58d38; }
+    .r7 { fill: #d86539; }
+    .r8 { fill: #c64235; }
+    .r9 { fill: #a93231; }
+    .r10 { fill: #76242f; }
+
+    .district {
+      stroke: #ffffff;
+      stroke-width: 5;
+      stroke-linejoin: round;
+    }
+
+    .district-label {
+      fill: #12202a;
+      paint-order: stroke;
+      stroke: rgba(255, 255, 255, 0.88);
+      stroke-width: 8;
+      stroke-linejoin: round;
+      font-size: 28px;
+      font-weight: 850;
+    }
+
+    .district-label.light {
+      fill: #ffffff;
+      stroke: rgba(0, 0, 0, 0.55);
+    }
+
+    .river {
+      fill: none;
+      stroke: #87d8e5;
+      stroke-width: 24;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.82;
+    }
+
+    .river-inner {
+      fill: none;
+      stroke: #42b9cf;
+      stroke-width: 11;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.9;
+    }
+
+    .loop {
+      display: grid;
+      grid-template-columns: 1fr 12mm 1fr;
+      grid-template-rows: auto auto;
+      gap: 3mm;
+      align-items: center;
+      margin: 4mm 0;
+    }
+
+    .loop-box {
+      padding: 4mm;
+      color: #ffffff;
+      background: var(--deep);
+      font-size: 20pt;
+      font-weight: 800;
+      line-height: 1.08;
+      text-align: center;
+    }
+
+    .loop-arrow {
+      color: var(--red);
+      font-size: 34pt;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .compact-loop {
+      grid-template-columns: 1fr 9mm 1fr;
+      gap: 1.6mm;
+      margin: 2.2mm 0;
+    }
+
+    .compact-loop .loop-box {
+      padding: 2.4mm 1.8mm;
+      font-size: 14.5pt;
+    }
+
+    .compact-loop .loop-arrow {
+      font-size: 24pt;
+    }
+
+    .application-screenshot {
+      height: auto;
+      border: 0;
+      background: transparent;
+    }
+
+    .application-points {
+      margin-top: 3mm;
+      padding-left: 6mm;
+    }
+
+    .application-points li {
+      font-size: 17.5pt;
+      line-height: 1.1;
+      margin-bottom: 1.2mm;
+    }
+
+    .critical-loop-copy {
+      font-size: 17.5pt;
+      line-height: 1.1;
+    }
+
+    .critical li {
+      font-size: 21pt;
+      line-height: 1.08;
+      margin-bottom: 1.4mm;
+    }
+
+    .takeaway {
+      padding: 5mm;
+      color: #ffffff;
+      background: var(--deep);
+      font-size: 25pt;
+      font-weight: 850;
+      line-height: 1.12;
+    }
+
+    footer {
+      display: grid;
+      grid-template-columns: 1fr;
+      justify-items: center;
+      margin-top: 4mm;
+      padding-top: 8mm;
+      border-top: 1.5mm solid var(--deep);
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm 6mm;
+      margin-top: 3mm;
+    }
+
+    .link-item {
+      font-size: 17pt;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
+    }
+
+    .link-item b {
+      color: var(--deep);
+    }
+
+    .qr-wrap {
+      display: grid;
+      grid-template-columns: 38mm 1fr;
+      gap: 4mm;
+      align-items: center;
+      padding: 3.5mm;
+      background: #ffffff;
+      border: 0.75mm solid var(--line);
+    }
+
+    .qr-wrap img {
+      width: 38mm;
+      height: 38mm;
+      display: block;
+    }
+
+    .qr-wrap strong {
+      display: block;
+      color: var(--deep);
+      font-size: 21pt;
+      line-height: 1.08;
+    }
+
+    .qr-wrap span {
+      display: block;
+      margin-top: 2mm;
+      color: var(--muted);
+      font-size: 15pt;
+      line-height: 1.12;
+      overflow-wrap: anywhere;
+    }
+
+    .references p {
+      margin: 0 0 2mm;
+      font-size: 16pt;
+      line-height: 1.13;
+    }
+
+    .references b {
+      color: var(--deep);
+    }
+
+    .references {
+      width: min(100%, 310mm);
+    }
+
+    @media print {
+      html,
+      body {
+        width: 594mm;
+        height: 841mm;
+        background: #ffffff;
+        padding: 0;
+      }
+
+      .poster {
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster" aria-label="A1 academic poster about predicting high-risk crime areas in Tartu">
+    <header>
+      <div>
+        <p class="kicker">Machine Learning (ML) / AI in Public Sector / Critical Data Studies (CDS)</p>
+        <h1>Predicting High-Risk Crime Areas in Tartu</h1>
+        <p class="subtitle">A synthetic data proof-of-concept for ML-based decision support</p>
+      </div>
+      <aside class="author-card">
+        <p>Authors</p>
+        <p class="author-list">
+          <b>Siim Klais</b> (Society and Information Processes Analysis)<br>
+          <b>Jaak Viiroja</b> (Conversion Master in IT)<br>
+          <b>Siim Saaresalu</b> (IT / Software Engineering)<br>
+          <b>Marcus Beet</b> (Mathematics)
+        </p>
+      </aside>
+    </header>
+
+    <div class="columns">
+      <div class="column">
+        <section class="block">
+          <h2>Problem</h2>
+          <p>Police resource allocation is often reactive, while real crime data is restricted by privacy, ethics, and access rules.</p>
+          <p><strong>Objective:</strong> test whether a simple ML pipeline can predict high-risk area-time combinations without using real personal data.</p>
+          <p><strong>Core question:</strong> can predictive policing systems be built technically, and what risks emerge when they guide decisions?</p>
+        </section>
+
+        <section class="block tint">
+          <h2>Approach</h2>
+          <p>Unit of analysis: one Tartu district at one hour. Output: probability of the area-hour being high-risk.</p>
+          <div class="pipeline" aria-label="Project pipeline">
+            <div class="pipe-step">Synthetic data</div>
+            <div class="pipe-arrow">></div>
+            <div class="pipe-step">Feature engineering</div>
+            <div class="pipe-arrow">></div>
+            <div class="pipe-step">ML comparison</div>
+            <div class="pipe-arrow">></div>
+            <div class="pipe-step">Risk scores</div>
+            <div class="pipe-arrow">></div>
+            <div class="pipe-step">Applications</div>
+          </div>
+        </section>
+
+        <section class="block">
+          <h2>Data</h2>
+          <p><strong>Synthetic environment:</strong> 18 districts x 90 days x 24 hours = 38,880 area-hours in the current Project_Crime dataset.</p>
+          <p><strong>Target:</strong> high-risk = incident_count >= 1; only 3,297 rows (8.48%) are high-risk.</p>
+          <ul>
+            <li>Time: hour, weekday, weekend, night</li>
+            <li>Context: weather and city events</li>
+            <li>Area: density, nightlife, student zones</li>
+            <li>History: past incident patterns</li>
+          </ul>
+          <p><strong>Why synthetic?</strong> No privacy risk, full control, reproducible experimentation.</p>
+          <p><strong>Weak point:</strong> the model learns the assumptions used to create its reality.</p>
+        </section>
+
+        <section class="block">
+          <h2>Models tested</h2>
+          <table class="model-table" aria-label="Comparison of tested machine learning models">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Task</th>
+                <th>Main setup</th>
+                <th>Notebook result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Linear regression</td>
+                <td>Count prediction</td>
+                <td>One-hot encoded features; 80/20 train-test split.</td>
+                <td>MAE 0.164, MSE 0.105, R2 0.146. Weak fit for incident counts.</td>
+              </tr>
+              <tr>
+                <td>PyCaret regression sweep</td>
+                <td>Count prediction</td>
+                <td>19 regressors, 10-fold CV, session 845; best was gradient boosting.</td>
+                <td>Best R2 0.197, RMSE 0.316, MAE 0.149. Counts remained hard to explain.</td>
+              </tr>
+              <tr>
+                <td>Decision tree</td>
+                <td>Incident-count class</td>
+                <td>Default DecisionTreeClassifier, no depth limit.</td>
+                <td>Accuracy 0.894, macro-F1 0.225. Mostly learned the zero-incident majority.</td>
+              </tr>
+              <tr>
+                <td>Logistic regression</td>
+                <td>High-risk binary</td>
+                <td>Balanced class weights, max_iter 1000, probability scores.</td>
+                <td>Acc 0.749, precision 0.217, recall 0.753, F1 0.337, ROC-AUC 0.812.</td>
+              </tr>
+              <tr>
+                <td>Random forest</td>
+                <td>High-risk binary</td>
+                <td>100 trees, min_samples_leaf 2, balanced_subsample, thresholded labels.</td>
+                <td>Acc 0.887, precision 0.350, recall 0.390, F1 0.369, ROC-AUC 0.768. Best F1.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="model-note"><strong>Takeaway:</strong> classification was more useful than count regression; random forest gave the best F1, while logistic regression ranked risk best by ROC-AUC.</p>
+        </section>
+      </div>
+
+      <div class="column">
+        <section class="block tint">
+          <h2>Results</h2>
+          <p>Actual notebook result: the binary model works modestly, while raw incident-count prediction struggles because 91.52% of rows have zero incidents.</p>
+          <div class="metric-row">
+            <div class="metric"><b>88.7%</b><span>Random forest accuracy</span></div>
+            <div class="metric"><b>0.369</b><span>Random forest F1</span></div>
+            <div class="metric"><b>0.812</b><span>Best ROC-AUC, logistic</span></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><b>0.350</b><span>Random forest precision</span></div>
+            <div class="metric"><b>0.390</b><span>Random forest recall</span></div>
+            <div class="metric"><b>38,880</b><span>Area-hour rows</span></div>
+          </div>
+        </section>
+
+        <figure class="visual-card center-confusion">
+          <div class="visual-title">
+            <h2>Confusion Matrix</h2>
+            <span>random forest</span>
+          </div>
+          <img class="visual-image confusion-image" src="assets/random-forest-confusion-matrix.png" alt="Random forest confusion matrix: 6640 true negatives, 477 false positives, 402 false negatives, 257 true positives.">
+          <svg class="map-svg" viewBox="320 185 790 875" role="img" aria-label="Illustrative Tartu district risk heatmap">
+            <rect x="320" y="185" width="790" height="875" fill="#f7fbfa"></rect>
+            <path class="river" d="M425 260 C412 292 448 320 500 344 C548 366 610 390 724 428 C746 452 748 492 732 534 C716 576 706 618 700 664 C720 704 712 742 742 784 C752 822 776 862 820 904 C866 944 922 970 990 990"></path>
+            <path class="river-inner" d="M425 260 C412 292 448 320 500 344 C548 366 610 390 724 428 C746 452 748 492 732 534 C716 576 706 618 700 664 C720 704 712 742 742 784 C752 822 776 862 820 904 C866 944 922 970 990 990"></path>
+            <polygon class="district r3" points="360,310 435,330 520,380 555,440 530,520 455,565 395,540 350,450"></polygon>
+            <polygon class="district r3" points="355,540 440,560 500,600 500,675 455,720 390,725 355,675"></polygon>
+            <polygon class="district r1" points="405,690 500,670 530,740 470,790 400,775"></polygon>
+            <polygon class="district r4" points="455,720 545,730 585,820 545,900 470,925 410,850"></polygon>
+            <polygon class="district r2" points="350,810 415,830 450,920 390,995 330,925"></polygon>
+            <polygon class="district r7" points="520,560 580,555 615,620 595,710 540,690 500,620"></polygon>
+            <polygon class="district r10" points="550,520 640,500 710,530 735,610 700,670 620,675 565,630 530,570"></polygon>
+            <polygon class="district r7" points="605,675 700,670 780,700 800,790 770,860 690,865 625,820 600,745"></polygon>
+            <polygon class="district r2" points="455,905 545,900 590,940 565,1005 485,1000 430,960"></polygon>
+            <polygon class="district r5" points="560,825 650,825 690,885 680,965 585,965 540,915"></polygon>
+            <polygon class="district r4" points="655,885 770,880 835,930 800,1010 660,1020 615,965"></polygon>
+            <polygon class="district r2" points="540,300 655,320 760,360 800,420 760,470 660,450 615,420 560,400"></polygon>
+            <polygon class="district r5" points="540,470 585,465 620,500 595,540 555,535 520,505"></polygon>
+            <polygon class="district r8" points="590,420 650,450 760,470 805,520 755,575 660,565 610,520 570,470"></polygon>
+            <polygon class="district r4" points="800,430 900,430 945,500 940,575 840,560 780,520"></polygon>
+            <polygon class="district r6" points="805,560 960,590 1015,690 990,820 930,905 845,900 790,820 780,710"></polygon>
+            <polygon class="district r2" points="905,840 1030,840 1090,915 1040,1030 900,1000 845,910"></polygon>
+            <polygon class="district r1" points="430,210 500,220 540,250 535,300 470,315 430,300 410,250"></polygon>
+            <text class="district-label" x="486" y="466" text-anchor="middle">Tähtvere</text>
+            <text class="district-label" x="436" y="590" text-anchor="middle">Veeriku</text>
+            <text class="district-label" x="466" y="735" text-anchor="middle">Maarja.</text>
+            <text class="district-label" x="530" y="795" text-anchor="middle">Tammelinn</text>
+            <text class="district-label" x="413" y="910" text-anchor="middle">Ränilinn</text>
+            <text class="district-label light" x="563" y="640" text-anchor="middle">Vaksali</text>
+            <text class="district-label light" x="640" y="590" text-anchor="middle">Kesklinn</text>
+            <text class="district-label light" x="704" y="765" text-anchor="middle">Karlova</text>
+            <text class="district-label" x="520" y="960" text-anchor="middle">Variku</text>
+            <text class="district-label" x="624" y="905" text-anchor="middle">Ropka</text>
+            <text class="district-label" x="735" y="960" text-anchor="middle">Ropka T.</text>
+            <text class="district-label" x="670" y="390" text-anchor="middle">Raadi-K.</text>
+            <text class="district-label" x="570" y="513" text-anchor="middle">Supilinn</text>
+            <text class="district-label light" x="692" y="510" text-anchor="middle">Ülejõe</text>
+            <text class="district-label" x="858" y="505" text-anchor="middle">Jaama.</text>
+            <text class="district-label" x="895" y="730" text-anchor="middle">Annelinn</text>
+            <text class="district-label" x="960" y="930" text-anchor="middle">Ihaste</text>
+            <text class="district-label" x="478" y="270" text-anchor="middle">Kvissent.</text>
+          </svg>
+          <div class="legend" aria-hidden="true">
+            <span class="r1"></span>
+            <span class="r3"></span>
+            <span class="r5"></span>
+            <span class="r7"></span>
+            <span class="r10"></span>
+          </div>
+          <div class="legend-labels"><span>Lower predicted risk</span><span>Higher predicted risk</span></div>
+          <p class="caption confusion-note">
+            <strong>How to read:</strong> Rows show the real label; columns show the model prediction. Label 0 means normal, label 1 means high-risk.
+            Correct predictions are 6,640 normal area-hours and 257 high-risk area-hours. Errors are 477 false alarms
+            and 402 missed high-risk cases.
+          </p>
+        </figure>
+
+        <figure class="visual-card">
+          <div class="visual-title">
+            <h2>ROC Curve</h2>
+            <span>actual scores</span>
+          </div>
+          <svg class="chart-svg" viewBox="0 0 900 430" role="img" aria-label="ROC-AUC comparison from the ML notebooks">
+            <line class="grid-line" x1="120" y1="332" x2="830" y2="332"></line>
+            <line class="grid-line" x1="120" y1="255" x2="830" y2="255"></line>
+            <line class="grid-line" x1="120" y1="178" x2="830" y2="178"></line>
+            <line class="grid-line" x1="120" y1="101" x2="830" y2="101"></line>
+            <line class="axis" x1="120" y1="360" x2="830" y2="360"></line>
+            <line class="axis" x1="120" y1="360" x2="120" y2="45"></line>
+            <path d="M120 360 L830 45" fill="none" stroke="#b8c3c9" stroke-width="5" stroke-dasharray="14 12"></path>
+            <path d="M120 360 C165 238 245 128 365 88 C520 38 655 42 830 45" fill="none" stroke="#225c9c" stroke-width="10" stroke-linecap="round"></path>
+            <path d="M120 360 C170 265 260 158 390 118 C545 70 690 62 830 45" fill="none" stroke="#047a74" stroke-width="10" stroke-linecap="round"></path>
+            <text class="chart-label" x="475" y="405" text-anchor="middle">False positive rate</text>
+            <text class="chart-label" x="38" y="205" transform="rotate(-90 38 205)" text-anchor="middle">True positive rate</text>
+            <text class="chart-value" x="455" y="176">Random forest ROC-AUC 0.768</text>
+            <line x1="390" y1="164" x2="440" y2="164" stroke="#047a74" stroke-width="10" stroke-linecap="round"></line>
+          </svg>
+          <p class="caption">
+            <strong>ROC reading:</strong> The ROC curve shows the trade-off between catching high-risk area-hours and falsely flagging normal ones.
+            Logistic regression ranked cases best overall (ROC-AUC 0.812); random forest was lower on ROC-AUC (0.768)
+            but performed best on F1, so it is used for the confusion matrix above.
+          </p>
+        </figure>
+
+        <figure class="visual-card">
+          <div class="visual-title">
+            <h2>Feature Importance</h2>
+            <span>random forest</span>
+          </div>
+          <svg class="chart-svg" viewBox="0 0 900 430" role="img" aria-label="Random forest feature importance chart from the ML notebook">
+            <line class="axis" x1="255" y1="360" x2="820" y2="360"></line>
+            <text class="chart-label" x="250" y="80" text-anchor="end">Hour</text>
+            <rect x="270" y="50" width="465" height="42" fill="#225c9c"></rect>
+            <text class="chart-value" x="755" y="82">0.246</text>
+            <text class="chart-label" x="250" y="135" text-anchor="end">Day of month</text>
+            <rect x="270" y="105" width="241" height="42" fill="#047a74"></rect>
+            <text class="chart-value" x="531" y="137">0.127</text>
+            <text class="chart-label" x="250" y="190" text-anchor="end">Nightlife zone</text>
+            <rect x="270" y="160" width="119" height="42" fill="#d99a25"></rect>
+            <text class="chart-value" x="409" y="192">0.063</text>
+            <text class="chart-label" x="250" y="245" text-anchor="end">Density</text>
+            <rect x="270" y="215" width="124" height="42" fill="#c33b32"></rect>
+            <text class="chart-value" x="414" y="247">0.065</text>
+            <text class="chart-label" x="250" y="300" text-anchor="end">Month</text>
+            <rect x="270" y="270" width="118" height="42" fill="#5b6d75"></rect>
+            <text class="chart-value" x="408" y="302">0.062</text>
+            <text class="chart-label" x="250" y="355" text-anchor="end">Foot traffic low</text>
+            <rect x="270" y="325" width="116" height="42" fill="#9a7f23"></rect>
+            <text class="chart-value" x="406" y="357">0.061</text>
+          </svg>
+          <p class="caption"><strong>Feature insight:</strong> Top features are time and area descriptors: strong signals, strong assumptions.</p>
+        </figure>
+      </div>
+
+      <div class="column">
+        <section class="block">
+          <h2>Limitations</h2>
+          <ul>
+            <li>Synthetic data simplifies real-world complexity.</li>
+            <li>The model predicts patterns, not causes.</li>
+            <li>Inequality and segregation are missing or simplified.</li>
+            <li>Thresholds turn uncertainty into concrete action.</li>
+          </ul>
+        </section>
+
+        <section class="block">
+          <h2>Application</h2>
+          <img class="visual-image application-screenshot" src="assets/decision-support-front-page.png" alt="Front page of the Tartu public safety forecasting decision support prototype.">
+          <ul class="application-points">
+            <li>Interactive Tartu risk map with district-level scores.</li>
+            <li>Selected suburb view shows 48-hour predicted incidents and risk.</li>
+            <li>Prototype links model details, dataset view, policing plan, and critical analysis.</li>
+          </ul>
+        </section>
+
+        <section class="block critical">
+          <h2>Critical Analysis</h2>
+          <p class="critical-loop-copy"><strong>Operational logic:</strong> identify top-risk district-hours and allocate more patrol attention there.</p>
+          <div class="loop compact-loop" aria-label="Feedback loop">
+            <div class="loop-box">More patrols</div>
+            <div class="loop-arrow">></div>
+            <div class="loop-box">More detected incidents</div>
+            <div class="loop-box">Higher risk score</div>
+            <div class="loop-arrow">></div>
+            <div class="loop-box">More patrols again</div>
+          </div>
+          <p class="critical-loop-copy"><strong>Critical point:</strong> the system does not detect crime; it detects where police look.</p>
+          <ul>
+            <li><strong>Datafication:</strong> crime becomes a pattern, not a social phenomenon.</li>
+            <li><strong>Feedback loops:</strong> repeated attention can manufacture hotspots.</li>
+            <li><strong>Bias amplification:</strong> data structures can reproduce inequality.</li>
+            <li><strong>False objectivity:</strong> scientific-looking outputs hide assumptions.</li>
+          </ul>
+        </section>
+
+        <section class="block warn">
+          <h2>Conclusion</h2>
+          <p><strong>Technically:</strong> the system is easy to build.</p>
+          <p><strong>Practically:</strong> it creates a high risk of misuse if treated as objective policing knowledge.</p>
+          <div class="takeaway">Main takeaway: predictive policing is less about prediction and more about how data shapes decisions.</div>
+        </section>
+
+      </div>
+    </div>
+
+    <footer>
+      <section class="references">
+        <h3>References</h3>
+        <p><b>Project materials:</b> ML notebooks Projekt (1).ipynb and tartu_risk_ml_models-1.ipynb; GitHub / CDS_Crime_Prediction_ML</p>
+        <p><b>Critical frame:</b> Meijer, A., & Wessels, M. (2019). Predictive Policing: Review of Benefits and Drawbacks. International Journal of Public Administration, 42(12), 1031-1039. https://doi.org/10.1080/01900692.2019.1575664</p>
+      </section>
+    </footer>
+  </main>
+</body>
+</html>

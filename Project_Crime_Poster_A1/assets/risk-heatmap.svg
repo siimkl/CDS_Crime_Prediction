@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="320 185 790 875" role="img" aria-label="Illustrative Tartu district risk heatmap">
+  <style>
+    .district { stroke: #ffffff; stroke-width: 5; stroke-linejoin: round; }
+    .district-label {
+      fill: #12202a;
+      paint-order: stroke;
+      stroke: rgba(255, 255, 255, 0.88);
+      stroke-width: 8;
+      stroke-linejoin: round;
+      font: 850 28px Aptos, Segoe UI, Arial, sans-serif;
+    }
+    .district-label.light { fill: #ffffff; stroke: rgba(0, 0, 0, 0.55); }
+    .river {
+      fill: none;
+      stroke: #87d8e5;
+      stroke-width: 24;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.82;
+    }
+    .river-inner {
+      fill: none;
+      stroke: #42b9cf;
+      stroke-width: 11;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.9;
+    }
+    .r1 { fill: #dcefe6; }
+    .r2 { fill: #b7ded2; }
+    .r3 { fill: #8ac9bf; }
+    .r4 { fill: #f0d575; }
+    .r5 { fill: #ebb64a; }
+    .r6 { fill: #e58d38; }
+    .r7 { fill: #d86539; }
+    .r8 { fill: #c64235; }
+    .r10 { fill: #76242f; }
+  </style>
+  <rect x="320" y="185" width="790" height="875" fill="#f7fbfa"/>
+  <path class="river" d="M425 260 C412 292 448 320 500 344 C548 366 610 390 724 428 C746 452 748 492 732 534 C716 576 706 618 700 664 C720 704 712 742 742 784 C752 822 776 862 820 904 C866 944 922 970 990 990"/>
+  <path class="river-inner" d="M425 260 C412 292 448 320 500 344 C548 366 610 390 724 428 C746 452 748 492 732 534 C716 576 706 618 700 664 C720 704 712 742 742 784 C752 822 776 862 820 904 C866 944 922 970 990 990"/>
+  <polygon class="district r3" points="360,310 435,330 520,380 555,440 530,520 455,565 395,540 350,450"/>
+  <polygon class="district r3" points="355,540 440,560 500,600 500,675 455,720 390,725 355,675"/>
+  <polygon class="district r1" points="405,690 500,670 530,740 470,790 400,775"/>
+  <polygon class="district r4" points="455,720 545,730 585,820 545,900 470,925 410,850"/>
+  <polygon class="district r2" points="350,810 415,830 450,920 390,995 330,925"/>
+  <polygon class="district r7" points="520,560 580,555 615,620 595,710 540,690 500,620"/>
+  <polygon class="district r10" points="550,520 640,500 710,530 735,610 700,670 620,675 565,630 530,570"/>
+  <polygon class="district r7" points="605,675 700,670 780,700 800,790 770,860 690,865 625,820 600,745"/>
+  <polygon class="district r2" points="455,905 545,900 590,940 565,1005 485,1000 430,960"/>
+  <polygon class="district r5" points="560,825 650,825 690,885 680,965 585,965 540,915"/>
+  <polygon class="district r4" points="655,885 770,880 835,930 800,1010 660,1020 615,965"/>
+  <polygon class="district r2" points="540,300 655,320 760,360 800,420 760,470 660,450 615,420 560,400"/>
+  <polygon class="district r5" points="540,470 585,465 620,500 595,540 555,535 520,505"/>
+  <polygon class="district r8" points="590,420 650,450 760,470 805,520 755,575 660,565 610,520 570,470"/>
+  <polygon class="district r4" points="800,430 900,430 945,500 940,575 840,560 780,520"/>
+  <polygon class="district r6" points="805,560 960,590 1015,690 990,820 930,905 845,900 790,820 780,710"/>
+  <polygon class="district r2" points="905,840 1030,840 1090,915 1040,1030 900,1000 845,910"/>
+  <polygon class="district r1" points="430,210 500,220 540,250 535,300 470,315 430,300 410,250"/>
+  <text class="district-label" x="486" y="466" text-anchor="middle">Tähtvere</text>
+  <text class="district-label" x="436" y="590" text-anchor="middle">Veeriku</text>
+  <text class="district-label" x="466" y="735" text-anchor="middle">Maarja.</text>
+  <text class="district-label" x="530" y="795" text-anchor="middle">Tammelinn</text>
+  <text class="district-label" x="413" y="910" text-anchor="middle">Ränilinn</text>
+  <text class="district-label light" x="563" y="640" text-anchor="middle">Vaksali</text>
+  <text class="district-label light" x="640" y="590" text-anchor="middle">Kesklinn</text>
+  <text class="district-label light" x="704" y="765" text-anchor="middle">Karlova</text>
+  <text class="district-label" x="520" y="960" text-anchor="middle">Variku</text>
+  <text class="district-label" x="624" y="905" text-anchor="middle">Ropka</text>
+  <text class="district-label" x="735" y="960" text-anchor="middle">Ropka T.</text>
+  <text class="district-label" x="670" y="390" text-anchor="middle">Raadi-K.</text>
+  <text class="district-label" x="570" y="513" text-anchor="middle">Supilinn</text>
+  <text class="district-label light" x="692" y="510" text-anchor="middle">Ülejõe</text>
+  <text class="district-label" x="858" y="505" text-anchor="middle">Jaama.</text>
+  <text class="district-label" x="895" y="730" text-anchor="middle">Annelinn</text>
+  <text class="district-label" x="960" y="930" text-anchor="middle">Ihaste</text>
+  <text class="district-label" x="478" y="270" text-anchor="middle">Kvissent.</text>
+</svg>
