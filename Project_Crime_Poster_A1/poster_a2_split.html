@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Predicting High-Risk Crime Areas in Tartu - A2 Split Poster</title>
+  <style>
+    @page {
+      size: 594mm 420mm;
+      margin: 0;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 594mm;
+      background: #d9dde2;
+    }
+
+    body {
+      display: grid;
+      gap: 12mm;
+      padding: 10mm;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .sheet {
+      position: relative;
+      width: 594mm;
+      height: 420mm;
+      overflow: hidden;
+      background: #f7f8f3;
+      box-shadow: 0 8mm 20mm rgba(28, 41, 54, 0.2);
+      break-after: page;
+      page-break-after: always;
+    }
+
+    .sheet:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+
+    iframe {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 594mm;
+      height: 841mm;
+      border: 0;
+      overflow: hidden;
+    }
+
+    .sheet-bottom iframe {
+      top: -420mm;
+    }
+
+    @media print {
+      html,
+      body {
+        background: #ffffff;
+      }
+
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      .sheet {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="sheet sheet-top" aria-label="A2 page 1: top half of the A1 poster">
+    <iframe src="index.html" title="Top half of the A1 poster" scrolling="no"></iframe>
+  </section>
+  <section class="sheet sheet-bottom" aria-label="A2 page 2: bottom half of the A1 poster">
+    <iframe src="index.html" title="Bottom half of the A1 poster" scrolling="no"></iframe>
+  </section>
+</body>
+</html>
