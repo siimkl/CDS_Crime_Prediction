@@ -211,6 +211,69 @@
       margin-bottom: 0;
     }
 
+    .data-card p {
+      margin-bottom: 2.4mm;
+    }
+
+    .data-summary {
+      display: grid;
+      gap: 2mm;
+      margin-bottom: 3mm;
+    }
+
+    .data-line {
+      display: grid;
+      grid-template-columns: 55mm 1fr;
+      gap: 3mm;
+      align-items: start;
+      font-size: 20pt;
+      line-height: 1.08;
+    }
+
+    .data-label {
+      color: var(--deep);
+      font-weight: 850;
+    }
+
+    .data-features {
+      display: grid;
+      gap: 1.4mm;
+      margin: 2mm 0 3mm;
+      padding: 3mm 0;
+      border-top: 0.45mm solid var(--line);
+      border-bottom: 0.45mm solid var(--line);
+    }
+
+    .data-feature {
+      display: grid;
+      grid-template-columns: 31mm 1fr;
+      gap: 3mm;
+      align-items: baseline;
+      font-size: 20pt;
+      line-height: 1.08;
+    }
+
+    .data-feature b {
+      color: var(--deep);
+      font-weight: 850;
+    }
+
+    .data-note {
+      display: grid;
+      grid-template-columns: 55mm 1fr;
+      gap: 3mm;
+      align-items: start;
+      margin-top: 2mm;
+      color: var(--muted);
+      font-size: 19pt;
+      line-height: 1.1;
+    }
+
+    .data-note strong {
+      color: var(--deep);
+      font-weight: 850;
+    }
+
     .metric-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -330,7 +393,7 @@
     }
 
     .confusion-image {
-      height: 148mm;
+      height: 140mm;
     }
 
     .center-confusion .map-svg,
@@ -371,7 +434,7 @@
     }
 
     .chart-svg {
-      height: 66mm;
+      height: 62mm;
     }
 
     .axis {
@@ -684,18 +747,26 @@
           </div>
         </section>
 
-        <section class="block">
+        <section class="block data-card">
           <h2>Data</h2>
-          <p><strong>Synthetic environment:</strong> 18 districts x 90 days x 24 hours = 38,880 area-hours in the current Project_Crime dataset.</p>
-          <p><strong>Target:</strong> high-risk = incident_count >= 1; only 3,297 rows (8.48%) are high-risk.</p>
-          <ul>
-            <li>Time: hour, weekday, weekend, night</li>
-            <li>Context: weather and city events</li>
-            <li>Area: density, nightlife, student zones</li>
-            <li>History: past incident patterns</li>
-          </ul>
-          <p><strong>Why synthetic?</strong> No privacy risk, full control, reproducible experimentation.</p>
-          <p><strong>Weak point:</strong> the model learns the assumptions used to create its reality.</p>
+          <div class="data-summary">
+            <div class="data-line">
+              <span class="data-label">Environment</span>
+              <span>18 districts x 90 days x 24 hours = 38,880 area-hours.</span>
+            </div>
+            <div class="data-line">
+              <span class="data-label">Target</span>
+              <span>High-risk = incident_count >= 1; 3,297 rows (8.48%) are high-risk.</span>
+            </div>
+          </div>
+          <div class="data-features" aria-label="Synthetic data feature groups">
+            <div class="data-feature"><b>Time</b><span>hour, weekday, weekend, night</span></div>
+            <div class="data-feature"><b>Context</b><span>weather and city events</span></div>
+            <div class="data-feature"><b>Area</b><span>density, nightlife, student zones</span></div>
+            <div class="data-feature"><b>History</b><span>past incident patterns</span></div>
+          </div>
+          <div class="data-note"><strong>Why synthetic?</strong><span>No privacy risk, full control, reproducible experimentation.</span></div>
+          <div class="data-note"><strong>Weak point</strong><span>The model learns the assumptions used to create its reality.</span></div>
         </section>
 
         <section class="block">
